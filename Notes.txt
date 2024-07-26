@@ -1,0 +1,1 @@
+Scaffold-DbContext "Data Source=SILVIO\SQLEXPRESS;User ID=sa;Password=nimdanimda;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Database=DBMindCare;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force

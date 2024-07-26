@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\API\bin\Release\net8.0\publish\</_PublishTargetUrl>
+    <History>True|2024-06-24T03:13:35.7452273Z;True|2024-06-23T17:28:41.1578198-05:00;True|2024-06-23T17:20:12.7456647-05:00;True|2024-06-23T15:09:57.0240144-05:00;True|2024-06-23T14:58:38.4445864-05:00;True|2024-06-23T14:24:09.6853349-05:00;True|2024-06-23T12:44:06.6492120-05:00;True|2024-06-22T22:58:09.0438217-05:00;True|2024-06-22T22:42:08.9360033-05:00;True|2024-06-22T22:34:38.1653582-05:00;True|2024-06-22T17:22:59.5775954-05:00;True|2024-06-22T16:56:26.4548801-05:00;True|2024-06-22T16:22:32.1222932-05:00;True|2024-06-22T13:54:03.7605539-05:00;True|2024-06-22T13:52:02.5813328-05:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

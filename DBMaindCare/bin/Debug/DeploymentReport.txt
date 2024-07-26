@@ -1,0 +1,26 @@
+﻿** Aspectos destacados
+     Tablas que se volverán a crear con los datos migrados
+       Ninguno
+     Índices clúster que se van a quitar
+       Ninguno
+     Índices clúster que se van a crear
+       Ninguno
+     Posibles incidencias de datos
+       Ninguno
+
+** Acciones del usuario
+     Crear
+       [dbo].[datos_personales] (Tabla)
+       [dbo].[especialidad] (Tabla)
+       [dbo].[paciente] (Tabla)
+       [dbo].[psicologo] (Tabla)
+       [dbo].[psicologo_especialidad] (Tabla)
+       [dbo].[FK_paciente_datos_personales] (Clave externa)
+       [dbo].[FK_psicologo_datos_personales] (Clave externa)
+       [dbo].[FK_psicologo_especialidad_psicologo] (Clave externa)
+       [dbo].[FK_psicologo_especialidad_especialidad] (Clave externa)
+
+** Acciones de compatibilidad
+
+Las bases de datos del proyecto y de destino tienen una configuración de intercalación diferente. Se pueden producir errores de implementación.
+

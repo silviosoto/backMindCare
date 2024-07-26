@@ -1,0 +1,27 @@
+﻿** Aspectos destacados
+     Tablas que se volverán a crear con los datos migrados
+       [dbo].[departamentos]
+     Índices clúster que se van a quitar
+       Ninguno
+     Índices clúster que se van a crear
+       Ninguno
+     Posibles incidencias de datos
+       El tipo de la columna municipio en la tabla [dbo].[municipios] es  VARCHAR (255) NOT NULL, pero se va a cambiar a 
+         VARCHAR (250) NOT NULL. Si la columna contiene datos no compatibles con el tipo  VARCHAR (250) NOT NULL, podrían
+         producirse pérdidas de datos y errores en la implementación.
+
+** Acciones del usuario
+     Quitar
+       restricción sin nombre en [dbo].[departamentos] (Restricción DEFAULT)
+       restricción sin nombre en [dbo].[municipios] (Restricción DEFAULT)
+     Modificar
+       [dbo].[datos_personales] (Tabla)
+       [dbo].[municipios] (Tabla)
+     Volver a crear la tabla
+       [dbo].[departamentos] (Tabla)
+
+** Acciones de compatibilidad
+
+El tipo de la columna municipio en la tabla [dbo].[municipios] es  VARCHAR (255) NOT NULL, pero se va a cambiar a  VARCHAR (250) NOT NULL. Si la columna contiene datos no compatibles con el tipo  VARCHAR (250) NOT NULL, podrían producirse pérdidas de datos y errores en la implementación.
+Las bases de datos del proyecto y de destino tienen una configuración de intercalación diferente. Se pueden producir errores de implementación.
+

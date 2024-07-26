@@ -1,0 +1,6 @@
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\psicology\development\MaindCare\MaindCare\DBMaindCare\bin\Debug\DBMaindCare.dacpac
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\psicology\development\MaindCare\MaindCare\DBMaindCare\bin\Debug\DBMaindCare.dll
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\psicology\development\MaindCare\MaindCare\DBMaindCare\bin\Debug\DBMaindCare.pdb
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\psicology\development\MaindCare\MaindCare\DBMaindCare\obj\Debug\DBMaindCare.sqlproj.AssemblyReference.cache
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\psicology\development\MaindCare\MaindCare\DBMaindCare\obj\Debug\DBMaindCare.dll
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\psicology\development\MaindCare\MaindCare\DBMaindCare\obj\Debug\DBMaindCare.pdb
