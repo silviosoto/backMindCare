@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-//var connectionString = builder.Configuration.GetConnectionString("defaultConnection");
-var connectionString = Environment.GetEnvironmentVariable("defaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("defaultConnection");
+//var connectionString = Environment.GetEnvironmentVariable("defaultConnection");
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles

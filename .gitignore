@@ -1,2 +1,8 @@
 ﻿.vs
 .vscode
+API/bin
+API/obj
+Data/bin
+Data/obj
+Domain/bin
+Domain/obj
