@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Domain.Models;
 
 namespace API.Models;
 
-public partial class DatosPersonale
+public partial class DatosPersonale : BaseEntity
 {
     public int Id { get; set; }
 

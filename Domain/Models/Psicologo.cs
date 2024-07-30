@@ -1,15 +1,14 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 
 namespace API.Models;
 
-public partial class Psicologo
+public partial class Psicologo: BaseEntity
 {
     public int Id { get; set; }
 
     public string? Descripcion { get; set; }
-
-    public string? Estado { get; set; }
 
     public string? Validado { get; set; }
     public string? sugerencias { get; set; }

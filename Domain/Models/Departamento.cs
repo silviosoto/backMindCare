@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
-namespace API.Models;
+namespace Domain.Models;
 
-public partial class Departamento
+public partial class Departamento : BaseEntity
 {
+    [Key]
     public int Id { get; set; }
 
     public string Nombre { get; set; } = null!;

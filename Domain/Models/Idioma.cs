@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 
 namespace API.Models;
 
-public partial class Idioma
+public partial class Idioma : BaseEntity
 {
     public int Id { get; set; }
 

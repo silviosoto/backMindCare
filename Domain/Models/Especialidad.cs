@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 
 namespace API.Models;
 
-public partial class Especialidad
+public partial class Especialidad : BaseEntity
 {
     public int Id { get; set; }
 

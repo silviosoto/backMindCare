@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 
 namespace API.Models;
 
-public partial class Paciente
+public partial class Paciente : BaseEntity
 {
     public int Id { get; set; }
 
-    public string? Estado { get; set; }
+    public bool? Estado { get; set; }
 
     public int? IdDatosPersonales { get; set; }
 

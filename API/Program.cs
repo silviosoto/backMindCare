@@ -1,7 +1,11 @@
 using API.Models;
 using API.Services;
+using Data.Contracts;
+using Data.Repository;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Domain.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,11 +19,13 @@ builder.Services.AddControllersWithViews()
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
 );
 builder.Services.AddDbContext<DbmindCareContext>(option => option.UseSqlServer(connectionString));
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddLogging();
 builder.Services.AddScoped<IAzureStorageService, AzureStorageService>();
+
 
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 

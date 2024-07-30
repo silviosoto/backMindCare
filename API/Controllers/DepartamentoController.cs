@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using NuGet.Protocol.Core.Types;
+using Data.Repository;
+using Data.Contracts;
+using Domain.Models;
 
 namespace API.Controllers
 {
@@ -13,26 +17,38 @@ namespace API.Controllers
     [ApiController]
     public class DepartamentoController : ControllerBase
     {
-        private readonly DbmindCareContext _context;
+        private readonly IRepository<Departamento> _repository;
+        private readonly ILogger<DepartamentoController> _logger;
 
-        public DepartamentoController(DbmindCareContext context)
+        public DepartamentoController(IRepository<Departamento> repository, ILogger<DepartamentoController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         // GET: api/Departamento
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Departamento>>> GetDepartamentos()
         {
-            return await _context.Departamentos.ToListAsync();
+            try
+            {
+                var items = await _repository.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                // Puedes personalizar la respuesta de error como sea necesario
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // GET: api/Departamento/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Departamento>> GetDepartamento(int id)
         {
-            var departamento = await _context.Departamentos.FindAsync(id);
-
+            var departamento = await _repository.GetByIdAsync(id);
+           
             if (departamento == null)
             {
                 return NotFound();
@@ -51,34 +67,16 @@ namespace API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(departamento).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DepartamentoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _repository.UpdateAsync(departamento);
 
             return NoContent();
         }
 
         // POST: api/Departamento
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Departamento>> PostDepartamento(Departamento departamento)
         {
-            _context.Departamentos.Add(departamento);
-            await _context.SaveChangesAsync();
+            await _repository.AddAsync(departamento);
 
             return CreatedAtAction("GetDepartamento", new { id = departamento.Id }, departamento);
         }
@@ -87,21 +85,14 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartamento(int id)
         {
-            var departamento = await _context.Departamentos.FindAsync(id);
+            var departamento = await _repository.GetByIdAsync(id);
             if (departamento == null)
             {
                 return NotFound();
             }
-
-            _context.Departamentos.Remove(departamento);
-            await _context.SaveChangesAsync();
-
+            await _repository.SoftDeleteAsync(departamento.Id);
+      
             return NoContent();
-        }
-
-        private bool DepartamentoExists(int id)
-        {
-            return _context.Departamentos.Any(e => e.Id == id);
         }
     }
 }

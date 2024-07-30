@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Models;
@@ -80,9 +81,9 @@ public partial class DbmindCareContext : DbContext
 
         modelBuilder.Entity<Departamento>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("departamento");
+            entity.HasKey(e => e.Id).HasName("PK_departamento");
+
+            entity.ToTable("departamento");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Nombre)
