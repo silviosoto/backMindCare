@@ -18,5 +18,7 @@ namespace Data.Contracts
         Task UpdateAsync(T entity);
         Task SoftDeleteAsync(int id);
         Task HardDeleteAsync(int id);
+        Task<IQueryable<T>> FindAsync(Expression<Func<T, bool>> predicate);
+        Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
     }
 }

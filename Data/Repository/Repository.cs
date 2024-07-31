@@ -102,7 +102,7 @@ namespace Data.Repository
                 var entity = await _dbSet.FindAsync(id);
                 if (entity != null)
                 {
-                    _context.Entry(entity).Property("estado").CurrentValue = true;
+                    _context.Entry(entity).Property("estado").CurrentValue = false;
                     await _context.SaveChangesAsync();
                 }
             }
@@ -127,6 +127,30 @@ namespace Data.Repository
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"An error occurred while performing hard delete on entity of type {typeof(T).Name} with id {id}");
+                throw;
+            }
+        }
+        public async Task<IQueryable<T>> FindAsync(Expression<Func<T, bool>> predicate)
+        {
+            try
+            {
+                return await Task.FromResult(_dbSet.Where(predicate));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while filtering entities of type {typeof(T).Name}");
+                throw;
+            }
+        }
+        public async Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate)
+        {
+            try
+            {
+                return await _dbSet.AnyAsync(predicate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"An error occurred while checking existence of entities of type {typeof(T).Name}");
                 throw;
             }
         }
