@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using Data.Contracts;
+using Domain.Models;
+using System.Linq.Expressions;
 
 namespace API.Controllers
 {
@@ -13,108 +16,136 @@ namespace API.Controllers
     [ApiController]
     public class MunicipioController : ControllerBase
     {
-        private readonly DbmindCareContext _context;
+        private readonly IRepository<Municipio> _repository;
+        private readonly ILogger<MunicipioController> _logger;
 
-        public MunicipioController(DbmindCareContext context)
+        public MunicipioController(IRepository<Municipio> repository,
+            ILogger<MunicipioController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         // GET: api/Municipio
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Municipio>>> GetMunicipios()
         {
-            return await _context.Municipios.ToListAsync();
+            try
+            {
+                var items = await _repository.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // GET: api/Municipio/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Municipio>> GetMunicipio(int id)
         {
-            var municipio = await _context.Municipios.FindAsync(id);
-
-            if (municipio == null)
+            try
             {
-                return NotFound();
-            }
+                var Municipio = await _repository.GetByIdAsync(id);
 
-            return municipio;
+                if (Municipio == null)
+                {
+                    return NotFound();
+                }
+
+                return Municipio;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpGet("departamento/{idDepartamento}")]
         public async Task<ActionResult<IEnumerable<Municipio>>> GetMunicipioPorDepartamento(int idDepartamento)
         {
-            var municipio = await _context.Municipios.Where(x => x.DepartamentoId == idDepartamento).ToListAsync();
-
-            if (municipio == null)
-            {
-                return NotFound();
-            }
-
-            return municipio;
-        }
-
-        // PUT: api/Municipio/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMunicipio(int id, Municipio municipio)
-        {
-            if (id != municipio.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(municipio).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MunicipioExists(id))
+                //var municipio = await _context.Municipios.Where(x => x.DepartamentoId == idDepartamento).ToListAsync();
+                Expression<Func<Municipio, bool>> filter = c => c.DepartamentoId == idDepartamento;
+                var municipio = await _repository.FindAsync(filter);
+                if (municipio == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                return municipio.ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
             }
 
-            return NoContent();
+        }
+
+        // PUT: api/Municipio/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutMunicipio(int id, Municipio municipio)
+        {
+            try
+            {
+
+                if (id != municipio.Id)
+                {
+                    return BadRequest();
+                }
+                _repository.UpdateAsync(municipio);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // POST: api/Municipio
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Municipio>> PostMunicipio(Municipio municipio)
         {
-            _context.Municipios.Add(municipio);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMunicipio", new { id = municipio.Id }, municipio);
+            try
+            {
+                await _repository.AddAsync(municipio);
+                return CreatedAtAction("Getmunicipio", new { id = municipio.Id }, municipio);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // DELETE: api/Municipio/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMunicipio(int id)
         {
-            var municipio = await _context.Municipios.FindAsync(id);
-            if (municipio == null)
+            try
             {
-                return NotFound();
+                var municipio = await _repository.GetByIdAsync(id);
+                if (municipio == null)
+                {
+                    return NotFound();
+                }
+                await _repository.SoftDeleteAsync(municipio.Id);
+
+                return NoContent();
             }
-
-            _context.Municipios.Remove(municipio);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
-        private bool MunicipioExists(int id)
-        {
-            return _context.Municipios.Any(e => e.Id == id);
-        }
     }
 }

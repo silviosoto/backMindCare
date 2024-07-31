@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using Data.Contracts;
+using Domain.Models;
 
 namespace API.Controllers
 {
@@ -13,25 +15,40 @@ namespace API.Controllers
     [ApiController]
     public class EspecialidadController : ControllerBase
     {
-        private readonly DbmindCareContext _context;
+ 
+        private readonly IRepository<Especialidad> _repository;
+        private readonly ILogger<EspecialidadController> _logger;
 
-        public EspecialidadController(DbmindCareContext context)
+        public EspecialidadController(IRepository<Especialidad> repository,
+                ILogger<EspecialidadController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         // GET: api/Especialidad
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Especialidad>>> GetEspecialidads()
         {
-            return await _context.Especialidads.ToListAsync();
+            try
+            {
+                var items = await _repository.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                // Puedes personalizar la respuesta de error como sea necesario
+                return StatusCode(500, "Internal server error.");
+            }
+
         }
 
         // GET: api/Especialidad/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Especialidad>> GetEspecialidad(int id)
         {
-            var especialidad = await _context.Especialidads.FindAsync(id);
+            var especialidad = await _repository.GetByIdAsync(id);
 
             if (especialidad == null)
             {
@@ -42,34 +59,26 @@ namespace API.Controllers
         }
 
         // PUT: api/Especialidad/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutEspecialidad(int id, Especialidad especialidad)
         {
-            if (id != especialidad.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(especialidad).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                if (id != especialidad.Id)
+                {
+                    return BadRequest();
+                }
+
+                _repository.UpdateAsync(especialidad);
+
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!EspecialidadExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
             }
 
-            return NoContent();
         }
 
         // POST: api/Especialidad
@@ -77,31 +86,41 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Especialidad>> PostEspecialidad(Especialidad especialidad)
         {
-            _context.Especialidads.Add(especialidad);
-            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEspecialidad", new { id = especialidad.Id }, especialidad);
+            try
+            {
+                await _repository.AddAsync(especialidad);
+                return CreatedAtAction("GetEspecialidad", new { id = especialidad.Id }, especialidad);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // DELETE: api/Especialidad/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteEspecialidad(int id)
         {
-            var especialidad = await _context.Especialidads.FindAsync(id);
-            if (especialidad == null)
+            try
             {
-                return NotFound();
+                var Especialidad = await _repository.GetByIdAsync(id);
+                if (Especialidad == null)
+                {
+                    return NotFound();
+                }
+                await _repository.SoftDeleteAsync(Especialidad.Id);
+
+                return NoContent();
             }
-
-            _context.Especialidads.Remove(especialidad);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
-        private bool EspecialidadExists(int id)
-        {
-            return _context.Especialidads.Any(e => e.Id == id);
-        }
+ 
     }
 }

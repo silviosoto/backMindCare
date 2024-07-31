@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using Data.Contracts;
+using Domain.Models;
 
 namespace API.Controllers
 {
@@ -13,30 +15,50 @@ namespace API.Controllers
     [ApiController]
     public class IdiomaController : ControllerBase
     {
-        private readonly DbmindCareContext _context;
+        private readonly IRepository<Idioma> _repository;
+        private readonly ILogger<IdiomaController> _logger;
 
-        public IdiomaController(DbmindCareContext context)
+        public IdiomaController(IRepository<Idioma> repository,
+            ILogger<IdiomaController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Idioma>>> GetServicio()
         {
-            return await _context.Idiomas.ToListAsync();
+            try
+            {
+                var items = await _repository.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                 return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Idioma>> GetServicio(int id)
         {
-            var Idioma = await _context.Idiomas.FindAsync(id);
-
-            if (Idioma == null)
+            try
             {
-                return NotFound();
-            }
+                var idioma = await _repository.GetByIdAsync(id);
 
-            return Idioma;
+                if (idioma == null)
+                {
+                    return NotFound();
+                }
+
+                return idioma;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
     }

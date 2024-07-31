@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using Data.Contracts;
+using Domain.Models;
 
 namespace API.Controllers
 {
@@ -13,63 +15,74 @@ namespace API.Controllers
     [ApiController]
     public class PacienteController : ControllerBase
     {
-        private readonly DbmindCareContext _context;
+        private readonly IRepository<Paciente> _repository;
+        private readonly ILogger<PacienteController> _logger;
 
-        public PacienteController(DbmindCareContext context)
+        public PacienteController(IRepository<Paciente> repository,
+            ILogger<PacienteController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         // GET: api/Paciente
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Paciente>>> GetPacientes()
         {
-            return await _context.Pacientes.ToListAsync();
+            try
+            {
+                var items = await _repository.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // GET: api/Paciente/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Paciente>> GetPaciente(int id)
         {
-            var paciente = await _context.Pacientes.FindAsync(id);
-
-            if (paciente == null)
-            {
-                return NotFound();
-            }
-
-            return paciente;
-        }
-
-        // PUT: api/Paciente/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPaciente(int id, Paciente paciente)
-        {
-            if (id != paciente.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(paciente).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PacienteExists(id))
+                var departamento = await _repository.GetByIdAsync(id);
+
+                if (departamento == null)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+                return departamento;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        // PUT: api/Paciente/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutPaciente(int id, Paciente paciente)
+        {
+            try
+            {
+                if (id != paciente.Id)
+                {
+                    return BadRequest();
+                }
+
+                _repository.UpdateAsync(paciente);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // POST: api/Paciente
@@ -77,31 +90,39 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Paciente>> PostPaciente(Paciente paciente)
         {
-            _context.Pacientes.Add(paciente);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetPaciente", new { id = paciente.Id }, paciente);
+            try
+            {
+                await _repository.AddAsync(paciente);
+                return CreatedAtAction("GetDepartamento", new { id = paciente.Id }, paciente);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // DELETE: api/Paciente/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaciente(int id)
         {
-            var paciente = await _context.Pacientes.FindAsync(id);
-            if (paciente == null)
+            try
             {
-                return NotFound();
+                var departamento = await _repository.GetByIdAsync(id);
+                if (departamento == null)
+                {
+                    return NotFound();
+                }
+                await _repository.SoftDeleteAsync(departamento.Id);
+
+                return NoContent();
             }
-
-            _context.Pacientes.Remove(paciente);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
-
-        private bool PacienteExists(int id)
-        {
-            return _context.Pacientes.Any(e => e.Id == id);
-        }
+ 
     }
 }

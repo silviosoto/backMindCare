@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
+using Data.Contracts;
+using Domain.Models;
 
 namespace API.Controllers
 {
@@ -13,30 +15,50 @@ namespace API.Controllers
     [ApiController]
     public class ServicioController : ControllerBase
     {
-        private readonly DbmindCareContext _context;
+        private readonly IRepository<Servicio> _repository;
+        private readonly ILogger<ServicioController> _logger;
 
-        public ServicioController(DbmindCareContext context)
+        public ServicioController(IRepository<Servicio> repository,
+            ILogger<ServicioController> logger)
         {
-            _context = context;
+            _repository = repository;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Servicio>>> GetServicio()
         {
-            return await _context.Servicios.ToListAsync();
+            try
+            {
+                var items = await _repository.GetAllAsync();
+                return Ok(items);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Servicio>> GetServicio(int id)
         {
-            var Servicios = await _context.Servicios.FindAsync(id);
-
-            if (Servicios == null)
+            try
             {
-                return NotFound();
-            }
+                var departamento = await _repository.GetByIdAsync(id);
 
-            return Servicios;
+                if (departamento == null)
+                {
+                    return NotFound();
+                }
+
+                return departamento;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
     }

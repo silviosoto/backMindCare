@@ -20,7 +20,8 @@ namespace API.Controllers
         private readonly IRepository<Departamento> _repository;
         private readonly ILogger<DepartamentoController> _logger;
 
-        public DepartamentoController(IRepository<Departamento> repository, ILogger<DepartamentoController> logger)
+        public DepartamentoController(IRepository<Departamento> repository,
+            ILogger<DepartamentoController> logger)
         {
             _repository = repository;
             _logger = logger;
@@ -38,8 +39,7 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting all items.");
-                // Puedes personalizar la respuesta de error como sea necesario
-                return StatusCode(500, "Internal server error.");
+                 return StatusCode(500, "Internal server error.");
             }
         }
 
@@ -47,52 +47,84 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Departamento>> GetDepartamento(int id)
         {
-            var departamento = await _repository.GetByIdAsync(id);
-           
-            if (departamento == null)
+            try
             {
-                return NotFound();
+                var departamento = await _repository.GetByIdAsync(id);
+
+                if (departamento == null)
+                {
+                    return NotFound();
+                }
+
+                return departamento;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
             }
 
-            return departamento;
         }
 
         // PUT: api/Departamento/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDepartamento(int id, Departamento departamento)
         {
-            if (id != departamento.Id)
+            try {
+               
+                if (id != departamento.Id)
+                {
+                    return BadRequest();
+                }
+
+                _repository.UpdateAsync(departamento);
+
+                return NoContent();
+            }
+            catch (Exception ex)
             {
-                return BadRequest();
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
             }
 
-            _repository.UpdateAsync(departamento);
-
-            return NoContent();
         }
 
         // POST: api/Departamento
         [HttpPost]
         public async Task<ActionResult<Departamento>> PostDepartamento(Departamento departamento)
         {
-            await _repository.AddAsync(departamento);
-
-            return CreatedAtAction("GetDepartamento", new { id = departamento.Id }, departamento);
+            try
+            {
+                await _repository.AddAsync(departamento);
+                return CreatedAtAction("GetDepartamento", new { id = departamento.Id }, departamento);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
 
         // DELETE: api/Departamento/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartamento(int id)
         {
-            var departamento = await _repository.GetByIdAsync(id);
-            if (departamento == null)
+            try
             {
-                return NotFound();
+                var departamento = await _repository.GetByIdAsync(id);
+                if (departamento == null)
+                {
+                    return NotFound();
+                }
+                await _repository.SoftDeleteAsync(departamento.Id);
+
+                return NoContent();
             }
-            await _repository.SoftDeleteAsync(departamento.Id);
-      
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
         }
     }
 }
