@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Data.Models;
+using Domain.Models;
 
 namespace API.Models;
 
@@ -10,7 +11,7 @@ public partial class DatosPersonale : BaseEntity
 
     public string? Apellidos { get; set; }
 
-    public string? FechaNacimiento { get; set; }
+    public DateTime? FechaNacimiento { get; set; }
 
     public string? Email { get; set; }
 
@@ -22,7 +23,12 @@ public partial class DatosPersonale : BaseEntity
 
     public int? MunicipiosId { get; set; }
 
-    public virtual ICollection<Paciente>? Pacientes { get; set; } = new List<Paciente>();
+    public Paciente Paciente { get; set; }
+    public string? ImagePerfil { get; set; }
 
     public virtual ICollection<Psicologo>? Psicologos { get; set; } = new List<Psicologo>();
+    public virtual User User { get; set; } = null!;
+    public virtual Hobbies Hobbies { get; set; } = null!;
+
+
 }
