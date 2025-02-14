@@ -20,5 +20,6 @@ namespace Data.Contracts
         Task HardDeleteAsync(int id);
         Task<IQueryable<T>> FindAsync(Expression<Func<T, bool>> predicate);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+        Task<T> GetSingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using Data.Models;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,7 +38,11 @@ public partial class DbmindCareContext : DbContext
 
     public virtual DbSet<Servicio> Servicios { get; set; }
 
-    
+    public virtual DbSet<User> Users { get; set; }
+    public virtual DbSet<Perfil> Perfil { get; set; }
+    public virtual DbSet<Hobbies> Hobbies { get; set; }
+    public virtual DbSet<Agenda> Agenda { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -157,10 +162,11 @@ public partial class DbmindCareContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("estado");
-            entity.Property(e => e.IdDatosPersonales).HasColumnName("id_datos_personales");
 
-            entity.HasOne(d => d.IdDatosPersonalesNavigation).WithMany(p => p.Pacientes)
-                .HasForeignKey(d => d.IdDatosPersonales)
+            entity.Property(e => e.IdDatosPersonales).HasColumnName("id_datos_personales"); 
+            entity.HasOne(e => e.DatosPersonale)
+                .WithOne(e => e.Paciente)
+                .HasForeignKey<Paciente>(d => d.IdDatosPersonales )
                 .HasConstraintName("FK_paciente_datos_personales");
         });
 
@@ -194,6 +200,10 @@ public partial class DbmindCareContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("validado");
+            entity.Property(e => e.ImagePerfil)
+                .HasMaxLength(150)
+                .IsUnicode(false)
+                .HasColumnName("ImagePerfil");
 
             entity.HasOne(d => d.IdDatosPersonalesNavigation).WithMany(p => p.Psicologos)
                 .HasForeignKey(d => d.IdDatosPersonales)
@@ -234,6 +244,7 @@ public partial class DbmindCareContext : DbContext
 
             entity.Property(e => e.IdPsicologo).HasColumnName("id_psicologo");
             entity.Property(e => e.IdServicio).HasColumnName("id_servicio");
+            entity.Property(e => e.Valor).HasColumnName("valor");
 
             entity.HasOne(d => d.IdPsicologoNavigation).WithMany(p => p.PsicologoServicios)
                 .HasForeignKey(d => d.IdPsicologo)
@@ -276,6 +287,86 @@ public partial class DbmindCareContext : DbContext
                 .HasMaxLength(150)
                 .IsUnicode(false)
                 .HasColumnName("nombre");
+        });
+
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__User__3213E83FFA64AA69");
+
+            entity.ToTable("User");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Estado).HasColumnName("estado");
+            entity.Property(e => e.FechaActualizacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.IdDatosPersonales).HasColumnName("id_datos_personales");
+            entity.Property(e => e.Password)
+                .HasMaxLength(250)
+                .IsUnicode(false)
+                .HasColumnName("password");
+            entity.Property(e => e.Username)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("username");
+            entity.Property(e => e.idPerfil).HasColumnName("id_perfil");
+            entity.HasOne(d => d.IdDatosPersonalesNavigation)
+                .WithOne(p => p.User)
+                .HasForeignKey<User>(d => d.IdDatosPersonales)
+                .HasConstraintName("FK_user_persona");
+        });
+
+        modelBuilder.Entity<Hobbies>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__hobbies__3213E83FAE9B75BC");
+
+            entity.ToTable("Hobbies");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Nombre)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("nombre");
+            entity.Property(e => e.Estado).HasColumnName("estado");
+            entity.Property(e => e.FechaActualizacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+            entity.HasOne(u => u.User) // Un User tiene un UserProfile
+            .WithOne(up => up.Hobbies) // Un UserProfile tiene un User
+            .HasForeignKey<Hobbies>(up => up.IdUser);
+            
+            entity.Property(e => e.IdDatosPersonales).HasColumnName("iddatospersonales");
+            //entity.HasOne(d => d.IdDatosPersonalesNavigation)
+            //    .WithMany(p => p.Hobbies)
+            //    .HasForeignKey<Hobbies>(d => d.IdDatosPersonales)
+            //    .HasConstraintName("FK_hobbies_datospersonales");
+
+
+            entity.HasOne(d => d.IdDatosPersonalesNavigation).WithMany(p => p.Hobbies)
+                .HasForeignKey(d => d.IdDatosPersonales)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_hobbies_datospersonales");
+        });
+
+
+        modelBuilder.Entity<Agenda>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Agenda__3214EC07EFBA9345");
+
+            entity.ToTable("Agenda");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.DiaSemana).HasColumnName("DiaSemana");
+    
+            entity.Property(e => e.Estado).HasColumnName("estado");
+            entity.Property(e => e.FechaActualizacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+            entity.Property(e => e.Idpsicologo).HasColumnName("Idpsicologo");
+            entity.HasOne(d => d.IdPsicologoNavigation)
+                .WithOne(p => p.Agenda)
+                .HasForeignKey<Agenda>(d => d.Idpsicologo)
+                .HasConstraintName("FK_agenda_psicologo");
         });
 
         OnModelCreatingPartial(modelBuilder);

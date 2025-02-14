@@ -28,7 +28,8 @@ public partial class DatosPersonale : BaseEntity
 
     public virtual ICollection<Psicologo>? Psicologos { get; set; } = new List<Psicologo>();
     public virtual User User { get; set; } = null!;
-    public virtual Hobbies Hobbies { get; set; } = null!;
+    //public virtual Hobbies Hobbies { get; set; } = null!;
+    public virtual ICollection<Hobbies>? Hobbies { get; set; } = new List<Hobbies>();
 
 
 }

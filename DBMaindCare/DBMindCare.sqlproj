@@ -67,6 +67,9 @@
     <Build Include="Tables\paciente.sql" />
     <Build Include="Tables\departamentos.sql" />
     <Build Include="Tables\municipios.sql" />
+    <Build Include="Tables\User.sql" />
+    <Build Include="Tables\perfil.sql" />
+    <Build Include="Tables\Agenda.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBMaindCare.refactorlog" />

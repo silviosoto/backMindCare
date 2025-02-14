@@ -14,3 +14,7 @@ C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\bin\Deb
 C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\DBMindCare.sqlproj.AssemblyReference.cache
 C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\DBMaindCare.dll
 C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\DBMaindCare.pdb
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\Model.xml
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\refactor.xml
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\postdeploy.sql
+C:\Users\silvi\OneDrive\Documents\Silvio\Ideas\dev\MaindCare\DBMaindCare\obj\Debug\predeploy.sql

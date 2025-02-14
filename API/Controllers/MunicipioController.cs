@@ -9,6 +9,7 @@ using API.Models;
 using Data.Contracts;
 using Domain.Models;
 using System.Linq.Expressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -64,12 +65,13 @@ namespace API.Controllers
             }
         }
 
+        [AllowAnonymous]
         [HttpGet("departamento/{idDepartamento}")]
         public async Task<ActionResult<IEnumerable<Municipio>>> GetMunicipioPorDepartamento(int idDepartamento)
         {
             try
             {
-                //var municipio = await _context.Municipios.Where(x => x.DepartamentoId == idDepartamento).ToListAsync();
+                
                 Expression<Func<Municipio, bool>> filter = c => c.DepartamentoId == idDepartamento;
                 var municipio = await _repository.FindAsync(filter);
                 if (municipio == null)
@@ -87,7 +89,7 @@ namespace API.Controllers
 
         }
 
-        // PUT: api/Municipio/5
+        // PUT: api/Hobbie/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMunicipio(int id, Municipio municipio)
         {

@@ -10,9 +10,11 @@ using NuGet.Protocol.Core.Types;
 using Data.Repository;
 using Data.Contracts;
 using Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DepartamentoController : ControllerBase
@@ -28,6 +30,7 @@ namespace API.Controllers
         }
 
         // GET: api/Departamento
+ 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Departamento>>> GetDepartamentos()
         {

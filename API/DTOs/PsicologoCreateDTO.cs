@@ -11,6 +11,7 @@ namespace API.Models.DTOs
         public int IdDatosPersonales { get; set; }
         public int? Experiencia { get; set; }
         public string? sugerencias { get; set; }
+        public IFormFile? image { get; set; }
 
     }
 }

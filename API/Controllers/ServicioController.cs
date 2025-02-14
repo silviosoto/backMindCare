@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using API.Models;
 using Data.Contracts;
 using Domain.Models;
+using BLL.PsicologoBll;
+using BLL.Servicio;
 
 namespace API.Controllers
 {
@@ -15,13 +17,13 @@ namespace API.Controllers
     [ApiController]
     public class ServicioController : ControllerBase
     {
-        private readonly IRepository<Servicio> _repository;
         private readonly ILogger<ServicioController> _logger;
+        private readonly ServicioService _servicioService;
 
-        public ServicioController(IRepository<Servicio> repository,
+        public ServicioController(ServicioService servicioService,
             ILogger<ServicioController> logger)
         {
-            _repository = repository;
+            _servicioService = servicioService;
             _logger = logger;
         }
 
@@ -30,7 +32,7 @@ namespace API.Controllers
         {
             try
             {
-                var items = await _repository.GetAllAsync();
+                var items = await _servicioService.GetAllServicio();
                 return Ok(items);
             }
             catch (Exception ex)
@@ -45,14 +47,35 @@ namespace API.Controllers
         {
             try
             {
-                var departamento = await _repository.GetByIdAsync(id);
+                var Servicio = await _servicioService.GetServicioById(id);
 
-                if (departamento == null)
+                if (Servicio == null)
                 {
                     return NotFound();
                 }
 
-                return departamento;
+                return Servicio;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting all items.");
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpGet("SearchCoincenceServiceName/{nombre}")]
+        public async Task<ActionResult<IEnumerable<Servicio>>> SearchCoincenceServiceName(string nombre)
+        {
+            try
+            {
+                var Servicio = await _servicioService.SearchCoincenceServiceName(nombre);
+
+                if (Servicio == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(Servicio);
             }
             catch (Exception ex)
             {

@@ -23,4 +23,6 @@ public partial class Psicologo: BaseEntity
     public virtual ICollection<PsicologoIdioma> PsicologoIdiomas { get; set; } = new List<PsicologoIdioma>();
 
     public virtual ICollection<PsicologoServicio> PsicologoServicios { get; set; } = new List<PsicologoServicio>();
+    public string? ImagePerfil { get; set; }
+    public virtual Agenda Agenda { get; set; } = null!;
 }

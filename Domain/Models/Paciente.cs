@@ -12,5 +12,5 @@ public partial class Paciente : BaseEntity
 
     public int? IdDatosPersonales { get; set; }
 
-    public virtual DatosPersonale? IdDatosPersonalesNavigation { get; set; }
+    public  DatosPersonale? DatosPersonale { get; set; }
 }
