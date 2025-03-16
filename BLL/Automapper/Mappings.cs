@@ -24,6 +24,7 @@ namespace BLL.Automapper
             CreateMap<PacienteUpdateDTO, Paciente>();
             CreateMap<DatosPersonaleCreateDTO, DatosPersonale>();
             CreateMap<DatosPersonaleUpdateDTO, DatosPersonale>();
+            CreateMap<CitaCreateDTO, Cita>();
 
             //CreateMap<PsicologoServicioDTO, PsicologoServicio>()
             //    .ForMember(dest => dest.IdPsicologo, opt => opt.MapFrom(src => src.IdPsicologo))

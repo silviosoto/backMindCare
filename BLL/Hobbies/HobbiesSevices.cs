@@ -48,12 +48,12 @@ namespace BLL.HobbiesBLL
         {
             await _hobiesRepopsitory.SoftDeleteAsync(Id);
         }
-        public async Task<List<Hobbies>> GethobbiesByUser(int IdUser)
+        public async Task<List<Hobbies>> GethobbiesByUser(int IdDatosPersonales)
         {
             try
             {
                 
-                return await _hobiesRepopsitory.GetHobbiesByUser(IdUser);
+                return await _hobiesRepopsitory.GetHobbiesByUser(IdDatosPersonales);
                   
             }
             catch (Exception e)

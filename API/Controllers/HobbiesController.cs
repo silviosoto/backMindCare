@@ -93,12 +93,12 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("ByUser/{idUser}")]
-        public async Task<ActionResult<IEnumerable<Hobbies>>> GetHobbies(int idUser)
+        [HttpGet("ByUser/{idDatosPersonales}")]
+        public async Task<ActionResult<IEnumerable<Hobbies>>> GetHobbiesByPersona(int idDatosPersonales)
         {
             try
             {
-                var items = await _hobbiesSevices.GethobbiesByUser(idUser);
+                var items = await _hobbiesSevices.GethobbiesByUser(idDatosPersonales);
                 return Ok(items);
             }
             catch (Exception ex)
@@ -106,7 +106,6 @@ namespace API.Controllers
                 _logger.LogError(ex, "An error occurred while getting all items.");
                 return StatusCode(500, "Internal server error.");
             }
-        }
-
+        } 
     }
 }

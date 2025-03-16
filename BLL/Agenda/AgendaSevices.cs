@@ -57,7 +57,7 @@ namespace BLL.HobbiesBLL
             try
             {
 
-                return await _agendaRepopsitory.GetAgendaByPsicologo(agendaByPsicologoDTO.IdUser,
+                return await _agendaRepopsitory.GetAgendaByPsicologo(agendaByPsicologoDTO.IdPsicologo,
                     agendaByPsicologoDTO.DiaSemana, agendaByPsicologoDTO.mes, agendaByPsicologoDTO.anio);
 
             }

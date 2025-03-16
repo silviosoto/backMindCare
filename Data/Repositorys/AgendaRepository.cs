@@ -38,13 +38,13 @@ namespace DAL.Repositorys
             return id_psicologo;
         }
 
-        public async Task<List<AgendaResponseDTO>> GetAgendaByPsicologo(int IdUser, int DiaSemana, int mes, int anio)
+        public async Task<List<AgendaResponseDTO>> GetAgendaByPsicologo(int IdPsicologo, int DiaSemana, int mes, int anio)
         {
 
-           int Idpsicologo = await  GetPsicologoByUser(IdUser);
+           //int Idpsicologo = await  GetPsicologoByUser(IdUser);
 
                var list = await context.Agenda.Where(
-                   x=> x.Idpsicologo == Idpsicologo
+                   x=> x.Idpsicologo == IdPsicologo
                 && x.anio == anio
                 && x.mes == mes
                 && x.DiaSemana == DiaSemana

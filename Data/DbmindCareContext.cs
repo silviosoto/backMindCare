@@ -42,6 +42,7 @@ public partial class DbmindCareContext : DbContext
     public virtual DbSet<Perfil> Perfil { get; set; }
     public virtual DbSet<Hobbies> Hobbies { get; set; }
     public virtual DbSet<Agenda> Agenda { get; set; }
+    public virtual DbSet<Cita> Cita { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -367,6 +368,29 @@ public partial class DbmindCareContext : DbContext
                 .WithOne(p => p.Agenda)
                 .HasForeignKey<Agenda>(d => d.Idpsicologo)
                 .HasConstraintName("FK_agenda_psicologo");
+        });
+
+        modelBuilder.Entity<Cita>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__cita__3214EC07E7201A27");
+
+            entity.ToTable("Cita");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Idpaciente).HasColumnName("Idpaciente");
+
+            entity.Property(e => e.Estado).HasColumnName("estado");
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+            entity.Property(e => e.FechaActualizacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+            entity.Property(e => e.Idpsicologo).HasColumnName("Idpsicologo");
+            modelBuilder.Entity<Cita>()
+            .HasOne(u => u.psicologo) // Un Usuario tiene un PerfilUsuario
+            .WithOne(p => p.cita) // Un PerfilUsuario pertenece a un Usuario
+            .HasForeignKey<Cita>(p => p.Idpsicologo); // Clave foránea
+            
+
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -37,6 +37,7 @@ builder.Services.AddScoped<IPsicologoRepository, PsicologoRepositorio>();
 builder.Services.AddScoped<IServicioRepository, ServicioRepository>();
 builder.Services.AddScoped<IHobbies, HobbiesRepository>();
 builder.Services.AddScoped<IAgenda, AgendaRepository>();
+builder.Services.AddScoped<ICita, CitaRepository>();
 builder.Services.AddScoped<IPacienteRepository,PacienteRepository>();
 // Repository
 builder.Services.AddScoped(typeof(Repository<>));
@@ -51,7 +52,8 @@ builder.Services.AddScoped<AgendaRepository>();
 builder.Services.AddScoped<AgendaSevices>();
 builder.Services.AddScoped<PacienteRepository>();
 builder.Services.AddScoped<PacienteService>();
-
+builder.Services.AddScoped<CitaRepository>();
+builder.Services.AddScoped<CitasServices>();
 //Automapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

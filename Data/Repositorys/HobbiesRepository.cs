@@ -31,9 +31,9 @@ namespace DAL.Repositorys
             return IdDatosPersonale;
         }
 
-        public async Task<List<Hobbies>> GetHobbiesByUser(int IdUser)
+        public async Task<List<Hobbies>> GetHobbiesByUser(int IdDatosPersonales)
         {
-            return await context.Hobbies.Where( x=> x.IdUser == IdUser && x.Estado == true)
+            return await context.Hobbies.Where( x=> x.IdDatosPersonales == IdDatosPersonales && x.Estado == true)
                 .AsNoTracking()
                 .ToListAsync();
 
