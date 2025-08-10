@@ -8,8 +8,8 @@ namespace Domain.Models
 {
     public enum EstadoCita
     {
-        Libre,
-        Cancelada,
-        Confirmada
+        Apartada,
+        Confirmada,
+        Cancelada
     }
 }

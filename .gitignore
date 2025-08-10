@@ -6,3 +6,9 @@ Data/bin
 Data/obj
 Domain/bin
 Domain/obj
+BLL/bin
+BLL/obj
+DBMaindCare/bin
+DBMaindCare/obj
+TestAPI/bin
+TestAPI/obj

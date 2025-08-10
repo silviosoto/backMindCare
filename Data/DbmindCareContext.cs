@@ -43,6 +43,8 @@ public partial class DbmindCareContext : DbContext
     public virtual DbSet<Hobbies> Hobbies { get; set; }
     public virtual DbSet<Agenda> Agenda { get; set; }
     public virtual DbSet<Cita> Cita { get; set; }
+    public virtual DbSet<Sala> Sala { get; set; }
+    public virtual DbSet<PayUConfirmation> PayUConfirmation { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -83,6 +85,27 @@ public partial class DbmindCareContext : DbContext
                 .HasMaxLength(5)
                 .IsUnicode(false)
                 .HasColumnName("tipo_id");
+        });
+
+
+        modelBuilder.Entity<PayUConfirmation>(entity =>
+        {
+            //entity.HasKey(e => e.Id).HasName("PK__Agenda__3214EC07EFBA9345");
+
+            entity.ToTable("PayUConfirmations");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.MerchantId).HasColumnName("merchantid");
+            entity.Property(e => e.StatePol).HasColumnName("statepol");
+            entity.Property(e => e.ResponseCodePol).HasColumnName("responsecodepol");
+            entity.Property(e => e.PaymentMethodType).HasColumnName("paymentmethodtype");
+            //entity.Property(e => e.Value).HasPrecision(18, 2);
+            entity.Property(e => e.Currency).HasColumnName("currency");
+            entity.Property(e => e.ReferenceSale).HasColumnName("referencesale");
+            entity.Property(e => e.PaymentDate).HasColumnType("datetime");
+            entity.Property(e => e.RawBody).HasColumnName("rawBody");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime");
+
         });
 
         modelBuilder.Entity<Departamento>(entity =>
@@ -389,9 +412,51 @@ public partial class DbmindCareContext : DbContext
             .HasOne(u => u.psicologo) // Un Usuario tiene un PerfilUsuario
             .WithOne(p => p.cita) // Un PerfilUsuario pertenece a un Usuario
             .HasForeignKey<Cita>(p => p.Idpsicologo); // Clave foránea
-            
+           
+            entity.Property(e => e.Idservicio).HasColumnName("Idservicio");
+            modelBuilder.Entity<Cita>()
+            .HasOne(u => u.servicio)
+            .WithOne(p => p.cita)
+            .HasForeignKey<Cita>(p => p.Idservicio); // Clave foránea
+
 
         });
+
+        modelBuilder.Entity<Sala>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__sala__3214EC0779310298");
+
+            entity.ToTable("Sala");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.fechahora).HasColumnType("datetime");
+            entity.Property(e => e.FechaActualizacion).HasColumnType("datetime");
+            entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+            entity.Property(e => e.UrlHost)
+                .HasMaxLength(250)
+                .IsUnicode(false)
+                .HasColumnName("urlhost");
+            entity.Property(e => e.TokenHost)
+                .IsUnicode(false)
+                .HasColumnName("tokenHost");
+            entity.Property(e => e.UrlHuesped)
+                .HasMaxLength(250)
+                .IsUnicode(false)
+                .HasColumnName("urlhuesped");
+            entity.Property(e => e.TokenHuesped)
+                .IsUnicode(false)
+                .HasColumnName("tokenHuesped");
+            entity.Property(e => e.IdCita).HasColumnName("IdCita");
+            modelBuilder.Entity<Sala>()
+            .HasOne(u => u.cita)  
+            .WithOne(p => p.sala) 
+            .HasForeignKey<Sala>(p => p.IdCita); // Clave foránea
+
+
+        });
+
+
+        
 
         OnModelCreatingPartial(modelBuilder);
     }

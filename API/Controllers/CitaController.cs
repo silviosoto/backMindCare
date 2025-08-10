@@ -1,4 +1,5 @@
 ﻿using API.Models;
+
 using BLL.HobbiesBLL;
 using BLL.PsicologoBll;
 using BLL.Servicio;
@@ -22,7 +23,6 @@ namespace API.Controllers
             _logger = logger;
         }
 
-      
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CitaDTO>>> GetHobbies([FromQuery] int idPsicologo, [FromQuery] DateTime fecha)
         {
@@ -76,6 +76,62 @@ namespace API.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+        [HttpGet("GetAppointmentByPatient")]
+        public async Task<ActionResult<CitaDetalleDTO>> GetAppointmentByPatient([FromQuery]int page, [FromQuery] int idPaciente, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var response = await _citasSevices.GetAppointmentByPatient(idPaciente, page, pageSize);
+                
+                return Ok(response);
+            }
+            catch (BLLException ex)
+            {
+                return BadRequest(new { Message = ex.Message, Details = ex.InnerException?.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet("cancelar/{idCita}")]
+        public async Task<ActionResult<Boolean>> CanaceAppointment(int idCita)
+        {
+            try
+            {
+                var citaCancelada = await _citasSevices.CancelAppointment(idCita);
+                return Ok(citaCancelada);
+            }
+            catch (BLLException ex)
+            {
+                return BadRequest(new { Message = ex.Message, Details = ex.InnerException?.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("confirmar/{idCita}")]
+        public async Task<ActionResult<Boolean>> ConfirmAppointment(int idCita)
+        {
+            try
+            {
+                var cita = await _citasSevices.ConfirmAppointment(idCita);
+                return Ok(cita);
+            }
+            catch (BLLException ex)
+            {
+                return BadRequest(new { Message = ex.Message, Details = ex.InnerException?.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
     }

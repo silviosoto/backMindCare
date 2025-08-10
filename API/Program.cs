@@ -39,6 +39,8 @@ builder.Services.AddScoped<IHobbies, HobbiesRepository>();
 builder.Services.AddScoped<IAgenda, AgendaRepository>();
 builder.Services.AddScoped<ICita, CitaRepository>();
 builder.Services.AddScoped<IPacienteRepository,PacienteRepository>();
+builder.Services.AddScoped<ISala,SalaRepository>();
+builder.Services.AddScoped<IPayment,PaymentRepository>();
 // Repository
 builder.Services.AddScoped(typeof(Repository<>));
 
@@ -54,9 +56,13 @@ builder.Services.AddScoped<PacienteRepository>();
 builder.Services.AddScoped<PacienteService>();
 builder.Services.AddScoped<CitaRepository>();
 builder.Services.AddScoped<CitasServices>();
+builder.Services.AddScoped<SalaRepository>();
+builder.Services.AddScoped<SalaSevices>();
+builder.Services.AddScoped<PaymentRepository>();
+builder.Services.AddScoped<PaymentSevices>();
 //Automapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-
+builder.Services.AddHttpClient();
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -136,7 +142,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors(x => x
-    .WithOrigins("https://mindcere.azurewebsites.net", "http://localhost:3000", "*") // allow any origin
+    .WithOrigins("https://mindcere.azurewebsites.net", "http://localhost:3000", "*", "https://mindcareappvc.daily.co", "http://localhost:4200") // allow any origin
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()); // allow credentials

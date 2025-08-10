@@ -9,6 +9,7 @@ public partial class Servicio : BaseEntity
     public int Id { get; set; }
 
     public string Nombre { get; set; } = null!;
+    public Cita cita { get; set; } = null!;
 
     public virtual ICollection<PsicologoServicio>? PsicologoServicios { get; set; } = new List<PsicologoServicio>();
 }
