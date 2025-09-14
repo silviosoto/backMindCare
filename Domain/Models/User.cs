@@ -2,6 +2,7 @@
 using Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Runtime;
 
 namespace Data.Models;
 
@@ -23,5 +24,6 @@ public partial class User
     public int idPerfil { get; set; }
     public virtual DatosPersonale IdDatosPersonalesNavigation { get; set; } = null!;
     public virtual Hobbies Hobbies { get; set; }
+    public Perfil Perfil { get; set; }
 
 }

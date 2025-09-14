@@ -12,4 +12,5 @@ public partial class Servicio : BaseEntity
     public Cita cita { get; set; } = null!;
 
     public virtual ICollection<PsicologoServicio>? PsicologoServicios { get; set; } = new List<PsicologoServicio>();
+    public List<FacturaDetalle> FacturaDetalles { get; set; }
 }

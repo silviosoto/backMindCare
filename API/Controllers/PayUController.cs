@@ -1,6 +1,11 @@
 ﻿using API.DTOs;
+using API.Models;
+using API.Tools;
+using BLL.Contracts;
 using BLL.HobbiesBLL;
 using Domain.DTO;
+using Domain.DTO;
+using Domain.Models;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +13,6 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
-using Domain.Models;
-using Domain.DTO;
 namespace API.Controllers
 {
     [ApiController]
@@ -20,6 +23,7 @@ namespace API.Controllers
         private readonly PaymentSevices _context;
         private readonly CitasServices _citasServices;
         private readonly SalaSevices _salaSevices;
+
 
         public PayUController(IConfiguration config, PaymentSevices context,
             CitasServices citasServices,
@@ -84,6 +88,7 @@ namespace API.Controllers
 
                 string[] listWordReferenceCode = reference_code.Split("_");
                 int idcita = int.Parse(listWordReferenceCode[1]);
+
                 await _citasServices.Pagado( idcita );
                 
                 var cita = await _citasServices.GetAppointment(idcita);
@@ -92,6 +97,7 @@ namespace API.Controllers
                 {
                     return NotFound(new { error = "Cita no encontrada" });
                 }
+
                 var fecha = cita.Fecha + cita.Hora;
                 SessionRequestDTO sessionRequestDTO = new SessionRequestDTO();
                 sessionRequestDTO.IdCita = cita.Id;

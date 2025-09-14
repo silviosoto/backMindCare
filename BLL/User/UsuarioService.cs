@@ -21,5 +21,11 @@ namespace BLL.UserBLL
         {
             return _usuarioRepository.GetByIdAsync(id);
         }
+
+        public Task<User> GetUserByUsername( string UserName )
+        {
+            return _usuarioRepository.GetUserbyUserNameAsync( UserName );
+        }
+        
     }
 }

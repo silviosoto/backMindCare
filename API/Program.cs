@@ -17,7 +17,13 @@ using Microsoft.Extensions.DependencyInjection;
 using BLL.Servicio;
 using DAL.Contracts;
 using BLL.HobbiesBLL;
+using BLL.UserBLL;
+using BLL.Contracts;
+using QuestPDF.Infrastructure;
 
+
+// Configurar la licencia gratuita de QuestPDF
+QuestPDF.Settings.License = LicenseType.Community;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -41,6 +47,7 @@ builder.Services.AddScoped<ICita, CitaRepository>();
 builder.Services.AddScoped<IPacienteRepository,PacienteRepository>();
 builder.Services.AddScoped<ISala,SalaRepository>();
 builder.Services.AddScoped<IPayment,PaymentRepository>();
+builder.Services.AddScoped<IUser,UsuarioRepository>();
 // Repository
 builder.Services.AddScoped(typeof(Repository<>));
 
@@ -60,6 +67,12 @@ builder.Services.AddScoped<SalaRepository>();
 builder.Services.AddScoped<SalaSevices>();
 builder.Services.AddScoped<PaymentRepository>();
 builder.Services.AddScoped<PaymentSevices>();
+builder.Services.AddScoped<UsuarioRepository>();
+builder.Services.AddScoped<UsuarioService>();
+
+builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
+builder.Services.AddScoped<IFacturaService, BLL.Factura.FacturaSevices>();
+
 //Automapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpClient();
@@ -140,6 +153,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
+// Habilitar archivos estáticos desde wwwroot
+app.UseStaticFiles();
 
 app.UseCors(x => x
     .WithOrigins("https://mindcere.azurewebsites.net", "http://localhost:3000", "*", "https://mindcareappvc.daily.co", "http://localhost:4200") // allow any origin

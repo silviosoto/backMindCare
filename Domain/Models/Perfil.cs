@@ -13,5 +13,5 @@ public partial class Perfil
     public DateTime? FechaCreacion { get; set; }
 
     public DateTime? FechaActualizacion { get; set; } 
-
+    public User User { get; set; }
 }

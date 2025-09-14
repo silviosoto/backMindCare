@@ -3,11 +3,6 @@ using AutoMapper;
 using Data.Models;
 using Domain.DTO;
 using Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BLL.Automapper
 {
@@ -26,11 +21,9 @@ namespace BLL.Automapper
             CreateMap<DatosPersonaleUpdateDTO, DatosPersonale>();
             CreateMap<CitaCreateDTO, Cita>();
             CreateMap<SalaCreateDTO, Sala>();
+            CreateMap<FacturaDto, Domain.Models.Factura>();
+            CreateMap<FacturaDetalleDto, FacturaDetalle>();
 
-            //CreateMap<PsicologoServicioDTO, PsicologoServicio>()
-            //    .ForMember(dest => dest.IdPsicologo, opt => opt.MapFrom(src => src.IdPsicologo))
-            //    .ForMember(dest => dest.IdServicio, opt => opt.MapFrom(src => src.IdServicio))
-            //    .ForMember(dest => dest.Valor, opt => opt.MapFrom(src => src.Valor));
         }
     }
 }

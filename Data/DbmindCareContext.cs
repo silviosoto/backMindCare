@@ -45,7 +45,8 @@ public partial class DbmindCareContext : DbContext
     public virtual DbSet<Cita> Cita { get; set; }
     public virtual DbSet<Sala> Sala { get; set; }
     public virtual DbSet<PayUConfirmation> PayUConfirmation { get; set; }
-
+    public virtual DbSet<Factura> Facturas { get; set; }
+    public DbSet<FacturaDetalle> FacturaDetalles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -333,11 +334,17 @@ public partial class DbmindCareContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("username");
-            entity.Property(e => e.idPerfil).HasColumnName("id_perfil");
             entity.HasOne(d => d.IdDatosPersonalesNavigation)
                 .WithOne(p => p.User)
                 .HasForeignKey<User>(d => d.IdDatosPersonales)
                 .HasConstraintName("FK_user_persona");
+            
+            entity.Property(e => e.idPerfil).HasColumnName("id_perfil");
+            modelBuilder.Entity<User>()
+            .HasOne(u => u.Perfil)
+            .WithOne(p => p.User)
+            .HasForeignKey<User>(p => p.idPerfil); // Clave foránea
+
         });
 
         modelBuilder.Entity<Hobbies>(entity =>
@@ -456,7 +463,70 @@ public partial class DbmindCareContext : DbContext
         });
 
 
-        
+        modelBuilder.Entity<Factura>(entity =>
+        {
+            entity.ToTable("Factura");
+
+            entity.HasKey(f => f.Id);
+            entity.Property(f => f.NumeroFactura)
+                  .IsRequired()
+                  .HasMaxLength(20);
+
+            entity.Property(f => f.FechaEmision)
+                  .IsRequired();
+
+            entity.Property(f => f.Subtotal)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(f => f.Iva)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(f => f.Total)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(f => f.Estado)
+                  .IsRequired();
+
+            // Relaciones
+            entity.HasOne(f => f.Paciente)
+                  .WithMany()
+                  .HasForeignKey(f => f.idPaciente);
+ 
+
+            entity.HasOne(f => f.Psicologo)
+                  .WithMany()
+                  .HasForeignKey(f => f.IdPsicologo);
+
+            entity.HasMany(f => f.FacturaDetalle)
+                  .WithOne(d => d.Factura)
+                  .HasForeignKey(d => d.IdFactura);
+        });
+
+        modelBuilder.Entity<FacturaDetalle>(entity =>
+        {
+            entity.HasKey(d => d.Id);
+
+            entity.Property(d => d.Descripcion)
+                  .IsRequired()
+                  .HasMaxLength(100);
+
+            entity.Property(d => d.ValorUnitario)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(d => d.Iva)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(d => d.Total)
+                  .HasColumnType("decimal(18,2)");
+
+            // Relación con Servicio
+            entity.HasOne(d => d.Servicio)
+                  .WithMany(s => s.FacturaDetalles)
+                  .HasForeignKey(d => d.IdServicio);  // No eliminar servicios usados en facturas
+
+            entity.Property(e => e.ispackage).HasColumnName("ispackage");
+        });
+
 
         OnModelCreatingPartial(modelBuilder);
     }

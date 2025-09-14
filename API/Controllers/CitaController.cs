@@ -1,5 +1,6 @@
 ﻿using API.Models;
-
+using API.Tools;
+using BLL.Contracts;
 using BLL.HobbiesBLL;
 using BLL.PsicologoBll;
 using BLL.Servicio;
@@ -17,10 +18,15 @@ namespace API.Controllers
     {
         private readonly CitasServices _citasSevices;
         private readonly ILogger<CitaController> _logger;
-        public CitaController(CitasServices citasSevices, ILogger<CitaController> logger)
+        private readonly IFacturaService _facturaService;
+        public CitaController(CitasServices citasSevices,
+            ILogger<CitaController> logger,
+            IFacturaService facturaService
+            )
         {
             _citasSevices = citasSevices;
             _logger = logger;
+            _facturaService = facturaService;
         }
 
         [HttpGet]
@@ -64,7 +70,29 @@ namespace API.Controllers
         {
             try
             {
+                if(citaCreateDTO.ValorServicio == 0) return BadRequest("El valor del servicio no puede ser cero.");
+                
                 var cita = await _citasSevices.ApartarCita(citaCreateDTO);
+                //crear factura
+                FacturaDto facturaDto = new FacturaDto();
+                facturaDto.IdPaciente = cita.Idpaciente;
+                facturaDto.IdPsicologo = cita.Idpsicologo;
+                facturaDto.FechaEmision = TimeHelper.GetBogotaTimeNow();
+
+                facturaDto.Detalles = new List<FacturaDetalleDto>
+                {
+                    new FacturaDetalleDto
+                    {
+                        IdServicio = cita.Idservicio,
+                        Descripcion = "",
+                        Cantidad = citaCreateDTO.sesiones,
+                        PorcentajeIva = 19,
+                        ValorUnitario = citaCreateDTO.ValorServicio,
+
+                    }
+                };
+                var factura = await _facturaService.CrearFactura(facturaDto);
+
                 return CreatedAtAction(nameof(GetAppointment), new { id = cita.Id }, cita);
             }
             catch (BLLException ex)

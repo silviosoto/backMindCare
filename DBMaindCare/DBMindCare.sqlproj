@@ -58,6 +58,7 @@
     <Folder Include="Properties" />
     <Folder Include="Tables" />
     <Folder Include="Snapshots" />
+    <Folder Include="SP" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Tables\datos_personales.sql" />
@@ -70,6 +71,9 @@
     <Build Include="Tables\User.sql" />
     <Build Include="Tables\perfil.sql" />
     <Build Include="Tables\Agenda.sql" />
+    <Build Include="Tables\cita.sql" />
+    <Build Include="SP\GetAvailableAppointments.sql" />
+    <Build Include="Tables\sala.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="DBMaindCare.refactorlog" />
