@@ -12,3 +12,5 @@ DBMaindCare/bin
 DBMaindCare/obj
 TestAPI/bin
 TestAPI/obj
+BLL/obj
+TestAPI/obj
