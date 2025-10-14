@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FacturaController : Controller
@@ -81,6 +82,23 @@ namespace API.Controllers
 
 
             return File(pdfBytes, "application/pdf", $"Factura_{DateTime.UtcNow.ToString()}.pdf");
+        }
+
+        [HttpGet("PaymethPsychologist")]
+        public async Task<IActionResult> PaymethPsychologist([FromQuery] int idPsicologo, [FromQuery] DateTime Fechainicio,
+            [FromQuery] DateTime Fechafin, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var facturas = await _facturaService.PaymethPsychologist(idPsicologo, Fechainicio, Fechafin, page, pageSize);
+                return Ok(facturas);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al obtener los pagos de los psicologos");
+                return StatusCode(500, $"Error al obtener los pagos de los psicologos: {ex.Message}");
+
+            }
         }
     }
 }

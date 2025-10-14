@@ -10,9 +10,9 @@ namespace Domain.DTO
 {
     public class FacturaDto
     {
-        public int IdPaciente { get; set; }          // ID del paciente/cliente
-        public int IdPsicologo { get; set; }        // ID del psicólogo
-        public DateTime FechaEmision { get; set; }   // Fecha de generación
+        public int IdPaciente { get; set; }          
+        public int? IdPsicologo { get; set; }         
+        public DateTime FechaEmision { get; set; }
         public List<FacturaDetalleDto> Detalles { get; set; }
 
     }

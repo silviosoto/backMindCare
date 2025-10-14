@@ -13,7 +13,8 @@ namespace Domain.Models
     {
         public int Id { get; set; }
         public int IdFactura { get; set; }
-        public string Descripcion { get; set; }
+        public int IdTerapia { get; set; }
+        public string ? Descripcion { get; set; }
         public int Cantidad { get; set; }
         public decimal ValorUnitario { get; set; }
         public decimal Iva { get; set; }
@@ -22,5 +23,6 @@ namespace Domain.Models
         public Boolean ispackage { get; set; }
         public Servicio Servicio { get; set; }
         public Factura Factura { get; set; }
+        public Terapia Terapia { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using API.Models;
 using AutoMapper;
+using BLL.DTOs;
 using Data.Models;
 using Domain.DTO;
 using Domain.Models;
@@ -23,7 +24,15 @@ namespace BLL.Automapper
             CreateMap<SalaCreateDTO, Sala>();
             CreateMap<FacturaDto, Domain.Models.Factura>();
             CreateMap<FacturaDetalleDto, FacturaDetalle>();
-
+            CreateMap<CarritoDeComraCreateDTO, carrito_de_compra>();
+            CreateMap<HistoriaClinicaCreateDto, HistoriaClinica>();
+            CreateMap<SignosFisicosDTO, SignosFisicos>();
+            CreateMap<MentalPersonalDTO, MentalPersonal>();
+            CreateMap<HistoriaAcademicaDTO, HistoriaAcademica>();
+            CreateMap<RazonesSintomasConductaDTO, RazonesSintomasConducta>();
+            CreateMap<DesarrolloPsicosexualDTO, DesarrolloPsicosexual>();
+            CreateMap<ExamenEstadoMentalDTO, ExamenEstadoMental>();
+            CreateMap<ConceptoPsicologicoDTO, ConceptoPsicologico>();
         }
     }
 }

@@ -15,6 +15,7 @@ using Domain.DTO;
 
 namespace API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PsicologoController : ControllerBase
@@ -63,7 +64,7 @@ namespace API.Controllers
         {
             //var psicologo = await _psicologoServices.GetPsicologoByUser(id);
 
-            var psicologo = await _psicologoServices.GetPsicologoById(id);
+            var psicologo = await _psicologoServices.GetPsicologoByUser(id);
             
             if (psicologo == null)
             {
@@ -77,8 +78,11 @@ namespace API.Controllers
             //}
 
             // Leer los bytes de la imagen
-            var imageBytes = System.IO.File.ReadAllBytes(filePath);
-            var base64Image = Convert.ToBase64String(imageBytes);
+            var base64Image = string.Empty;
+            if (filePath is not null ) { 
+                var imageBytes = System.IO.File.ReadAllBytes(filePath);
+                base64Image = Convert.ToBase64String(imageBytes);
+            }
 
             
 
@@ -238,16 +242,18 @@ namespace API.Controllers
                 //}
 
                 string? FileNameImageProfile = psicologoDto.image?.FileName;
-                const long MaxFileSizeImageProfile = 51200; // 5 MB
-                var filePath = Path.Combine("wwwroot/uploads", FileNameImageProfile);
+                
 
-                if (System.IO.File.Exists(filePath))
-                {
-                    System.IO.File.Delete(filePath);
-                }
 
                 if (!string.IsNullOrEmpty(FileNameImageProfile))
                 {
+                    const long MaxFileSizeImageProfile = 51200; // 5 MB
+                    var filePath = Path.Combine("wwwroot/uploads", FileNameImageProfile);
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        System.IO.File.Delete(filePath);
+                    }
                     if (psicologoDto.image.Length > MaxFileSize)
                     {
                         return BadRequest(new { error = "El archivo ha exedido el limite ." });
@@ -258,6 +264,13 @@ namespace API.Controllers
                     {
                         return BadRequest(new { error = "Solo se permiten documentos png or jpg" });
                     }
+
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", FileNameImageProfile);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await psicologoDto.image.CopyToAsync(stream);
+                    }
                 }
 
                 //var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", FileName);
@@ -265,14 +278,7 @@ namespace API.Controllers
                 //using (var stream = new FileStream(path, FileMode.Create))
                 //{
                 //    await psicologoDto.file.CopyToAsync(stream);
-                //}
-
-                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", FileNameImageProfile);
-
-                using (var stream = new FileStream(path, FileMode.Create))
-                {
-                    await psicologoDto.image.CopyToAsync(stream);
-                }
+                //} 
 
                 _IdDatosPersonalesNavigation.FechaCreacion = DateTime.Now;
                 string numeroid = _IdDatosPersonalesNavigation.NumeroId;

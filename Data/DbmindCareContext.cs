@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using Azure;
 using Data.Models;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
 
 namespace API.Models;
 
@@ -19,25 +20,15 @@ public partial class DbmindCareContext : DbContext
     }
 
     public virtual DbSet<DatosPersonale> DatosPersonales { get; set; }
-
     public virtual DbSet<Departamento> Departamentos { get; set; }
-
     public virtual DbSet<Especialidad> Especialidads { get; set; }
-
     public virtual DbSet<Idioma> Idiomas { get; set; }
-
     public virtual DbSet<Municipio> Municipios { get; set; }
-
     public virtual DbSet<Paciente> Pacientes { get; set; }
-
     public virtual DbSet<Psicologo> Psicologos { get; set; }
-
     public virtual DbSet<PsicologoEspecialidad> PsicologoEspecialidads { get; set; }
-
     public virtual DbSet<PsicologoServicio> PsicologoServicios { get; set; }
-
     public virtual DbSet<Servicio> Servicios { get; set; }
-
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<Perfil> Perfil { get; set; }
     public virtual DbSet<Hobbies> Hobbies { get; set; }
@@ -47,6 +38,18 @@ public partial class DbmindCareContext : DbContext
     public virtual DbSet<PayUConfirmation> PayUConfirmation { get; set; }
     public virtual DbSet<Factura> Facturas { get; set; }
     public DbSet<FacturaDetalle> FacturaDetalles { get; set; }
+    public DbSet<Pagos> Pagos { get; set; }
+    public DbSet<Terapia> Terapia { get; set; }
+    public DbSet<carrito_de_compra> carrito_de_compra { get; set; }
+
+    public DbSet<HistoriaClinica> HistoriaClinica { get; set; }
+    public DbSet<SignosFisicos> SignosFisicos { get; set; }
+    public DbSet<MentalPersonal> MentalPersonal { get; set; }
+    public DbSet<HistoriaAcademica> HistoriaAcademica { get; set; }
+    public DbSet<RazonesSintomasConducta> RazonesSintomasConducta { get; set; }
+    public DbSet<DesarrolloPsicosexual> DesarrolloPsicosexual { get; set; }
+    public DbSet<ExamenEstadoMental> ExamenEstadoMental { get; set; }
+    public DbSet<ConceptoPsicologico> ConceptoPsicologico { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -415,17 +418,20 @@ public partial class DbmindCareContext : DbContext
             entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
 
             entity.Property(e => e.Idpsicologo).HasColumnName("Idpsicologo");
+            
             modelBuilder.Entity<Cita>()
-            .HasOne(u => u.psicologo) // Un Usuario tiene un PerfilUsuario
-            .WithOne(p => p.cita) // Un PerfilUsuario pertenece a un Usuario
-            .HasForeignKey<Cita>(p => p.Idpsicologo); // Clave foránea
+                .HasOne(u => u.psicologo)  
+                .WithOne(p => p.cita)  
+                .HasForeignKey<Cita>(p => p.Idpsicologo); // Clave foránea
            
             entity.Property(e => e.Idservicio).HasColumnName("Idservicio");
             modelBuilder.Entity<Cita>()
-            .HasOne(u => u.servicio)
-            .WithOne(p => p.cita)
-            .HasForeignKey<Cita>(p => p.Idservicio); // Clave foránea
+                .HasOne(u => u.servicio)
+                .WithOne(p => p.cita)
+                .HasForeignKey<Cita>(p => p.Idservicio); // Clave foránea
 
+            entity.Property(e => e.Idterapia).HasColumnName("Idterapia");
+             
 
         });
 
@@ -491,11 +497,6 @@ public partial class DbmindCareContext : DbContext
             entity.HasOne(f => f.Paciente)
                   .WithMany()
                   .HasForeignKey(f => f.idPaciente);
- 
-
-            entity.HasOne(f => f.Psicologo)
-                  .WithMany()
-                  .HasForeignKey(f => f.IdPsicologo);
 
             entity.HasMany(f => f.FacturaDetalle)
                   .WithOne(d => d.Factura)
@@ -507,7 +508,6 @@ public partial class DbmindCareContext : DbContext
             entity.HasKey(d => d.Id);
 
             entity.Property(d => d.Descripcion)
-                  .IsRequired()
                   .HasMaxLength(100);
 
             entity.Property(d => d.ValorUnitario)
@@ -523,10 +523,776 @@ public partial class DbmindCareContext : DbContext
             entity.HasOne(d => d.Servicio)
                   .WithMany(s => s.FacturaDetalles)
                   .HasForeignKey(d => d.IdServicio);  // No eliminar servicios usados en facturas
+           
+            entity.HasOne(d => d.Terapia)
+                  .WithMany()
+                  .HasForeignKey(d => d.IdTerapia);
 
             entity.Property(e => e.ispackage).HasColumnName("ispackage");
         });
 
+        modelBuilder.Entity<Pagos>(entity =>
+        {
+            entity.HasKey(p => p.Id);
+
+            entity.Property(p => p.TipoPago)
+                  .IsRequired()
+                  .HasMaxLength(20);
+
+            entity.Property(p => p.Monto)
+                  .HasColumnType("decimal(18,2)");
+
+            entity.Property(p => p.FechaPago)
+                  .IsRequired();
+
+            entity.Property(p => p.Estado)
+                  .IsRequired()
+                  .HasMaxLength(20);
+
+            // Relaciones
+            entity.HasOne(p => p.Psicologo)
+                  .WithMany()
+                  .HasForeignKey(p => p.PsicologoId);
+
+            entity.HasOne(p => p.Factura)
+                  .WithMany()
+                  .HasForeignKey(p => p.FacturaId);
+                  
+
+        });
+
+        modelBuilder.Entity<Terapia>(entity =>
+        {
+            entity.ToTable("Terapia");
+
+            entity.HasKey(f => f.Id);
+            // Relaciones
+            entity.HasOne(f => f.Paciente)
+                  .WithMany()
+                  .HasForeignKey(f => f.idPaciente);
+            
+            entity.HasOne(f => f.Psicologo)
+                  .WithMany()
+                  .HasForeignKey(f => f.Idpsicologo);
+
+            entity.HasOne(f => f.Servicio)
+              .WithMany()
+              .HasForeignKey(f => f.Idservicio);
+
+            entity.Property(f => f.valor)
+                  .HasColumnType("decimal(18,2)");
+            
+            entity.Property(f => f.NumeroSesiones)
+                  .HasColumnName("NumeroSesiones")
+                  .IsRequired();
+            
+            entity.Property(f => f.IdUsuarioCreacion)
+                  .HasColumnName("IdUsuarioCreacion")
+                  .IsRequired();
+
+            entity.Property(f => f.FechaCreacion)
+                  .HasColumnName("FechaCreacion")
+                  .HasColumnType("datetime");
+                  //.IsRequired();
+
+            entity.Property(f => f.FechaActualizacion)
+                  .HasColumnName("FechaActualizacion");
+                  //.IsRequired();
+
+            entity.Property(f => f.IdUsuarioActualizacion)
+                    .HasColumnName("IdUsuarioActualizacion")
+                    .IsRequired();
+
+            entity.Property(f => f.Estado)
+                  .IsRequired();
+        });
+
+        modelBuilder.Entity<carrito_de_compra>(entity =>
+        {
+            entity.ToTable("carrito_de_compra"); 
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("Id");
+
+            entity.HasOne(f => f.Psicologo)
+                .WithMany()
+                .HasForeignKey(f => f.IdPsicologo);
+
+            entity.HasOne(f => f.Paciente)
+                .WithMany()
+                .HasForeignKey(f => f.IdPaciente);
+
+            entity.HasOne(f => f.Servicio)
+                .WithMany()
+                .HasForeignKey(f => f.IdServicio);
+            entity.Property(e => e.Fecha).HasColumnType("datetime");
+            entity.Property(e => e.Hora).HasColumnType("time");
+
+            entity.Property(e => e.EsPaquete)
+                .HasColumnName("Es_Paquete")
+                .HasDefaultValue(false);
+
+            entity.Property(e => e.Estado).HasColumnName("estado");
+
+            entity.Property(e => e.ValorServicio)
+                .HasColumnName("ValorServicio")
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
+            entity.Property(e => e.NumeroSesiones)
+                .HasColumnName("Numero_Sesiones");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+             
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.IdUsuarioCreacion);
+
+            entity.HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.IdUsuarioActualizacion);
+        });
+
+        modelBuilder.Entity<HistoriaClinica>(entity =>
+        {
+            entity.ToTable("HISTORIA_CLINICA");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.Estado)
+                .HasColumnName("estado")
+                .IsRequired();
+
+            entity.Property(e => e.IdPaciente)
+                .HasColumnName("IdPaciente");
+
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.Paciente)
+                .WithMany()
+                .HasForeignKey(e => e.IdPaciente)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_HISTORIA_CLINICA_paciente");
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_HISTORIA_CLINICA_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_HISTORIA_CLINICA_usario_actualizacion");
+        });
+
+        // Configuración para SignosFisicos
+        modelBuilder.Entity<SignosFisicos>(entity =>
+        {
+            entity.ToTable("SIGNOS_FISICOS");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.Laceraciones)
+                .HasColumnName("LACERACIONES")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Hematoma)
+                .HasColumnName("HEMATOMA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Quemaduras)
+                .HasColumnName("QUEMADURAS")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Cicatrices)
+                .HasColumnName("CICATRICES")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Fracturas)
+                .HasColumnName("FRACTURAS")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Observaciones)
+                .HasColumnName("OBSERVACIONES")
+                .HasMaxLength(1000);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.SignosFisicos)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_SIGNOS_FISICOS_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_SIGNOS_FISICOS_usario_actualizacion");
+        });
+
+        // Configuración para MentalPersonal
+        modelBuilder.Entity<MentalPersonal>(entity =>
+        {
+            entity.ToTable("MENTAL_PERSONAL");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.DiscapacidadCognitiva)
+                .HasColumnName("DISCAPACIDAD_COGNITIVA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Epilepsia)
+                .HasColumnName("EPILEPSIA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.EnfermedadesFamiliaresHeredables)
+                .HasColumnName("ENFERMEDADES_FAMILIARES_HEREDABLES")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.ConsumoDeSustanciasPsicoactivas)
+                .HasColumnName("CONSUMO_DE_SUSTANCIAS_PSICOACTIVAS")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.ConsumoDeAlcohol)
+                .HasColumnName("CONSUMO_DE_ALCOHOL")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.DxDeSaludMental)
+                .HasColumnName("DX_DE_SALUD_MENTAL")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.IntentoDeSuicidio)
+                .HasColumnName("INTENTO_DE_SUICIDIO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.EventosTraumaticos)
+                .HasColumnName("EVENTOS_TRAUMATICOS")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.SeEncuentraMedicado)
+                .HasColumnName("SE_ENCUENTRA_MEDICADO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.AntecedentesDeAutolesion)
+                .HasColumnName("ANTECEDENTES_DE_AUTOLESION")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.InternacionesEnCentrosPsiquiatricos)
+                .HasColumnName("INTERNACIONES_EN_CENTROS_PSIQUIATRICOS")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Observaciones)
+                .HasColumnName("OBSERVACIONES")
+                .HasMaxLength(1000);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.MentalPersonal)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_MENTAL_PERSONAL_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_MENTAL_PERSONAL_usario_actualizacion");
+        });
+
+        // Configuración para HistoriaAcademica
+        modelBuilder.Entity<HistoriaAcademica>(entity =>
+        {
+            entity.ToTable("HISTORIA_ACADEMICA");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.EdadDeIngresoALaEscuela)
+                .HasColumnName("EDAD_DE_INGRESO_A_LA_ESCUELA")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.AdaptacionInicial)
+                .HasColumnName("ADAPTACION_INICIAL")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.DesempenoAcademico)
+                .HasColumnName("DESEMPENO_ACADEMICO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.AnosPerdidos)
+                .HasColumnName("ANOS_PERDIDOS")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.CursoActual)
+                .HasColumnName("CURSO_ACTUAL")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.MateriaQueSeFacilitaYLaQueSeDificulta)
+                .HasColumnName("MATERIA_QUE_SE_FACILITA_Y_LA_QUE_SE_DIFICULTA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.TiempoDiarioDeEstudioHoras)
+                .HasColumnName("TIEMPO_DIARIO_DE_ESTUDIO_HORAS")
+                .HasMaxLength(100);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.HistoriaAcademica)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_HISTORIA_ACADEMICA_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_HISTORIA_ACADEMICA_usario_actualizacion");
+        });
+
+        // Configuración para RazonesSintomasConducta
+        modelBuilder.Entity<RazonesSintomasConducta>(entity =>
+        {
+            entity.ToTable("RAZONES_DE_SINTOMAS_CONDUCTA");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.RelacionadosAmbientesFamiliares)
+                .HasColumnName("RELACIONADOS_AMBIENTES_FAMILIARES")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.RelacionadosAmbienteSocial)
+                .HasColumnName("RELACIONADOS_AMBIENTE_SOCIAL")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.RelacionadosAmbientesAcademicos)
+                .HasColumnName("RELACIONADOS_AMBIENTES_ACADEMICOS")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.RelacionadosCaracteristicasDelIndividuo)
+                .HasColumnName("RELACIONADOS_CARACTERISTICAS_DEL_INDIVIDUO")
+                .HasMaxLength(500);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.RazonesSintomasConducta)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_RAZONES_DE_SINTOMAS_CONDUCTA_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_RAZONES_DE_SINTOMAS_CONDUCTA_usario_actualizacion");
+        });
+
+        // Configuración para DesarrolloPsicosexual
+        modelBuilder.Entity<DesarrolloPsicosexual>(entity =>
+        {
+            entity.ToTable("DESARROLLO_PSICOSEXUAL");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.EdadDeDesarrollo)
+                .HasColumnName("EDAD_DE_DESARROLLO")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.IdentidadSexual)
+                .HasColumnName("IDENTIDAD_SEXUAL")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.OrientacionSexual)
+                .HasColumnName("ORIENTACION_SEXUAL")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.EdadDeInicioDeRelacionesSexuales)
+                .HasColumnName("EDAD_DE_INICIO_DE_RELACIONES_SEXUALES")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.UsoDeMetodosDePlanificacion)
+                .HasColumnName("USO_DE_METODOS_DE_PLANIFICACION")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.HaSidoVictimaDeAbusoSexual)
+                .HasColumnName("HA_SIDO_VICTIMA_DE_ABUSO_SEXUAL")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.EnfermedadesDeTransmisionSexual)
+                .HasColumnName("ENFERMEDADES_DE_TRANSMISION_SEXUAL")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.MadreOPadreAdolescente)
+                .HasColumnName("MADRE_O_PADRE_ADOLESCENTE")
+                .HasMaxLength(100);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.DesarrolloPsicosexual)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_DESARROLLO_PSICOSEXUAL_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_DESARROLLO_PSICOSEXUAL_usario_actualizacion");
+        });
+
+        // Configuración para ExamenEstadoMental
+        modelBuilder.Entity<ExamenEstadoMental>(entity =>
+        {
+            entity.ToTable("EXAMEN_DE_ESTADO_MENTAL");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.NivelDeConciencia)
+                .HasColumnName("NIVEL_DE_CONCIENCIA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Atencion)
+                .HasColumnName("ATENCION")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Sensopercepcion)
+                .HasColumnName("SENSOPERCEPCION")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Afecto)
+                .HasColumnName("AFECTO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Lenguaje)
+                .HasColumnName("LENGUAJE")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Orientacion)
+                .HasColumnName("ORIENTACION")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Sueno)
+                .HasColumnName("SUENO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Pensamiento)
+                .HasColumnName("PENSAMIENTO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.ConductaMotora)
+                .HasColumnName("CONDUCTA_MOTORA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Memoria)
+                .HasColumnName("MEMORIA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.PatronDeAlimentacion)
+                .HasColumnName("PATRON_DE_ALIMENTACION")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Inteligencia)
+                .HasColumnName("INTELIGENCIA")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.NivelDeRazonamiento)
+                .HasColumnName("NIVEL_DE_RAZONAMIENTO")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.PorteYActitud)
+                .HasColumnName("PORTE_Y_ACTITUD")
+                .HasMaxLength(500);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.ExamenEstadoMental)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_EXAMEN_DE_ESTADO_MENTAL_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_EXAMEN_DE_ESTADO_MENTAL_usario_actualizacion");
+        });
+
+        // Configuración para ConceptoPsicologico
+        modelBuilder.Entity<ConceptoPsicologico>(entity =>
+        {
+            entity.ToTable("CONCEPTO_PSICOLOGICO");
+
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id)
+                .HasColumnName("id")
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.IdHistoriaClinica)
+                .HasColumnName("id_historia_clinica")
+                .IsRequired();
+
+            entity.Property(e => e.DiagnosticoPrincipal)
+                .HasColumnName("DIAGNOSTICO_PRINCIPAL")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.DiagnosticoRelacionado1)
+                .HasColumnName("DIAGNOSTICO_RELACIONADO_1")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.DiagnosticoRelacionado2)
+                .HasColumnName("DIAGNOSTICO_RELACIONADO_2")
+                .HasMaxLength(500);
+
+            entity.Property(e => e.PlanDeTratamiento)
+                .HasColumnName("PLAN_DE_TRATAMIENTO")
+                .HasMaxLength(1000);
+
+            entity.Property(e => e.Objetivos)
+                .HasColumnName("OBJETIVOS")
+                .HasMaxLength(1000);
+
+            entity.Property(e => e.Recomendaciones)
+                .HasColumnName("RECOMENDACIONES")
+                .HasMaxLength(1000);
+
+            entity.Property(e => e.Compromisos)
+                .HasColumnName("COMPROMISOS")
+                .HasMaxLength(1000);
+
+            // Campos de auditoría
+            entity.Property(e => e.IdUsuarioCreacion)
+                .HasColumnName("IdUsuarioCreacion");
+
+            entity.Property(e => e.FechaCreacion)
+                .HasColumnName("FechaCreacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.FechaActualizacion)
+                .HasColumnName("FechaActualizacion")
+                .HasColumnType("datetime");
+
+            entity.Property(e => e.IdUsuarioActualizacion)
+                .HasColumnName("IdUsuarioActualizacion");
+
+            // Relaciones
+            entity.HasOne(e => e.HistoriaClinica)
+                .WithMany(hc => hc.ConceptoPsicologico)
+                .HasForeignKey(e => e.IdHistoriaClinica)
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            entity.HasOne(e => e.UsuarioCreacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioCreacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_CONCEPTO_PSICOLOGICO_usario_creacion");
+
+            entity.HasOne(e => e.UsuarioActualizacion)
+                .WithMany()
+                .HasForeignKey(e => e.IdUsuarioActualizacion)
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_CONCEPTO_PSICOLOGICO_usario_actualizacion");
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

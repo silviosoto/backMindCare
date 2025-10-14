@@ -40,7 +40,7 @@ namespace API
                 shouldAddAudienceClaim ? _audience : string.Empty,
                 claims,
                 //expires: now.AddMinutes(_expiryMinutes),
-                expires: now.AddMinutes(5),
+                expires: now.AddHours(5),
                 signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret)), SecurityAlgorithms.HmacSha256Signature));
             var accessToken = new JwtSecurityTokenHandler().WriteToken(jwtToken);
 

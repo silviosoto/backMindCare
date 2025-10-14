@@ -43,7 +43,7 @@ namespace DAL.Repositorys
                 .Include(p => p.PsicologoIdiomas)
                     .ThenInclude(i => i.IdIdiomaNavigation)// Incluyendo relación 1 a muchos con PsicologoIdiomas
                 .Include(p => p.PsicologoServicios)          // Incluyendo relación 1 a muchos con PsicologoServicios
-                .FirstOrDefaultAsync(p => p.IdDatosPersonales == id);
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task InsertPsicologoServicio(PsicologoServicio psicologoServicio)

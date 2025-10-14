@@ -1,14 +1,9 @@
 ﻿using API.DTOs;
-using API.Models;
-using API.Tools;
 using BLL.Contracts;
 using BLL.HobbiesBLL;
 using Domain.DTO;
-using Domain.DTO;
-using Domain.Models;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -23,16 +18,19 @@ namespace API.Controllers
         private readonly PaymentSevices _context;
         private readonly CitasServices _citasServices;
         private readonly SalaSevices _salaSevices;
+        private readonly ICarroDeCompraService _carroDeCompraService;
 
 
         public PayUController(IConfiguration config, PaymentSevices context,
             CitasServices citasServices,
+            ICarroDeCompraService carroDeCompraService,
             SalaSevices salaSevices)
         {
             _config = config;
             _context = context;
             _citasServices = citasServices;
             _salaSevices = salaSevices;
+            _carroDeCompraService = carroDeCompraService;
         }
 
         [HttpPost("firma")]
@@ -87,25 +85,11 @@ namespace API.Controllers
                 string reference_code = parsed["reference_sale"];
 
                 string[] listWordReferenceCode = reference_code.Split("_");
-                int idcita = int.Parse(listWordReferenceCode[1]);
+                int idCarritoCompra = int.Parse(listWordReferenceCode[1]);
 
-                await _citasServices.Pagado( idcita );
+                await _carroDeCompraService.ConfirmarCarritoCompra(idCarritoCompra);
                 
-                var cita = await _citasServices.GetAppointment(idcita);
-                
-                if (cita == null)
-                {
-                    return NotFound(new { error = "Cita no encontrada" });
-                }
 
-                var fecha = cita.Fecha + cita.Hora;
-                SessionRequestDTO sessionRequestDTO = new SessionRequestDTO();
-                sessionRequestDTO.IdCita = cita.Id;
-                sessionRequestDTO.PsicologoId = cita.Idpsicologo;
-                sessionRequestDTO.HoraCita = (DateTime)fecha;
-                sessionRequestDTO.PacienteId = cita.Idpaciente;
-
-                await _salaSevices.CreateSala(sessionRequestDTO);
                 return Ok();
             }
             catch (Exception ex)

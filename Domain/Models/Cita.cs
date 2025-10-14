@@ -12,6 +12,7 @@ namespace Domain.Models
         public int Id { get; set; }
         public int Idpsicologo { get; set; }
         public int Idpaciente { get; set; }
+        public int Idterapia { get; set; }
         public int Idservicio { get; set; }
         public TimeSpan Hora { get; set; }
         public EstadoCita Estado { get; set; }
@@ -21,6 +22,7 @@ namespace Domain.Models
         public Psicologo psicologo { get; set; }
         public Sala sala { get; set; }
         public Servicio servicio { get; set; }
+        //public Terapia terapia { get; set; }
         public Boolean? pagado { get; set; } = false;
         public string? MotivoConsulta { get; set; }
     }

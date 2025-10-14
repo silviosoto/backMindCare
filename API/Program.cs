@@ -20,6 +20,8 @@ using BLL.HobbiesBLL;
 using BLL.UserBLL;
 using BLL.Contracts;
 using QuestPDF.Infrastructure;
+using BLL;
+using BLL.Factura;
 
 
 // Configurar la licencia gratuita de QuestPDF
@@ -48,6 +50,8 @@ builder.Services.AddScoped<IPacienteRepository,PacienteRepository>();
 builder.Services.AddScoped<ISala,SalaRepository>();
 builder.Services.AddScoped<IPayment,PaymentRepository>();
 builder.Services.AddScoped<IUser,UsuarioRepository>();
+
+
 // Repository
 builder.Services.AddScoped(typeof(Repository<>));
 
@@ -72,6 +76,26 @@ builder.Services.AddScoped<UsuarioService>();
 
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
 builder.Services.AddScoped<IFacturaService, BLL.Factura.FacturaSevices>();
+builder.Services.AddScoped<ICarritoDeCompraRepository, CarritoDeCompraRepository>();
+builder.Services.AddScoped<ICarroDeCompraService, CarritoDeCompraSevices>();
+builder.Services.AddScoped<ITerapiaRepository, TerapiaRepository>();
+builder.Services.AddScoped<ITerapiaService, TerapiaSevices>();
+builder.Services.AddScoped<IHistoriaclinicaRepository, HistoriaclinicaRepository>();
+builder.Services.AddScoped<IHistoriaClinicaService, HistoriaclinicaSevices>();
+builder.Services.AddScoped<ISignosFisicosRepository, SignosFisicosRepository>();
+builder.Services.AddScoped<ISignosFisicosService, SignosFisicosService>();
+builder.Services.AddScoped<IMentalPersonalRepository, MentalPersonalRepository>();
+builder.Services.AddScoped<IMentalPersonalService, MentalPersonalService>();
+builder.Services.AddScoped<IHistoriaAcademicaRepository, HistoriaAcademicaRepository>();
+builder.Services.AddScoped<IHistoriaAcademicaService, HistoriaAcademicaService>();
+builder.Services.AddScoped<IRazonesSintomasConductaRepository, RazonesSintomasConductaRepository>();
+builder.Services.AddScoped<IRazonesSintomasConductaService, RazonesSintomasConductaService>();
+builder.Services.AddScoped<IDesarrolloPsicosexualRepository, DesarrolloPsicosexualRepository>();
+builder.Services.AddScoped<IDesarrolloPsicosexualService, DesarrolloPsicosexualService>();
+builder.Services.AddScoped<IExamenEstadoMentalRepository, ExamenEstadoMentalRepository>();
+builder.Services.AddScoped<IExamenEstadoMentalService, ExamenEstadoMentalService>();
+builder.Services.AddScoped<IConceptoPsicologicoRepository, ConceptoPsicologicoRepository>();
+builder.Services.AddScoped<IConceptoPsicologicoService, ConceptoPsicologicoService>();
 
 //Automapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -99,11 +123,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddLogging();
 builder.Services.AddScoped<IAzureStorageService, AzureStorageService>();
 
-
-
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
-
 
 builder.Services.AddSwaggerGen(c =>
 {

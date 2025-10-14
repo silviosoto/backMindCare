@@ -43,6 +43,7 @@ namespace BLL.HobbiesBLL
             {              
                 Cita cita = _mapper.Map<Cita>(citaCreateDTO);
                 cita.FechaCreacion = DateTime.Now;
+                cita.Idterapia = 5;
                 await _citaRepopsitory.AddAsync(cita);
 
                 return cita;

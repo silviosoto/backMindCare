@@ -15,7 +15,6 @@ namespace Domain.Models
         public string NumeroFactura { get; set; }
         public DateTime FechaEmision { get; set; }
         public int idPaciente { get; set; }
-        public int IdPsicologo { get; set; } 
         public decimal Subtotal { get; set; }
         public decimal Iva { get; set; }
         public decimal Total { get; set; }
@@ -24,7 +23,7 @@ namespace Domain.Models
         public string? QrCode { get; set; } // Base64 del QR
         public string? JsonDian { get; set; } // Respuesta DIAN 
         public Paciente Paciente { get; set; }
-        public Psicologo Psicologo { get; set; }
+        //public Psicologo Psicologo { get; set; }
         public List<FacturaDetalle> FacturaDetalle { get; set; }
     }
 }

@@ -36,7 +36,7 @@ namespace BLL.PsicologoBll
                 .Select(u => new { u.IdDatosPersonalesNavigation.Id })
                 .FirstOrDefaultAsync();
 
-            return await _psicologoRepository.GetPsicologoConRelacionesAsync(datos_personales.Id);
+            return await _psicologoRepository.GetPsicologoConRelacionesAsync(id);
         }
 
         public async Task<Psicologo?> GetPsicologoById(int id)
@@ -47,6 +47,16 @@ namespace BLL.PsicologoBll
                 .Where(x => x.Id == id  )
                 .FirstOrDefaultAsync();
            
+        }
+        public async Task<Psicologo?> GetPsicologoByIdUser(int id)
+        {
+            return await _psicologoRepository.context.Psicologos
+            .Include(u => u.IdDatosPersonalesNavigation)
+                .ThenInclude(u => u.User)
+                .ThenInclude(h => h.Hobbies)
+            .Where(x => x.IdDatosPersonalesNavigation.User.Id == id)
+            .FirstOrDefaultAsync();
+
         }
 
         public Task AddPsicologo(Psicologo psicologo)

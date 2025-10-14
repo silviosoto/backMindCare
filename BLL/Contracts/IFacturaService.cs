@@ -13,6 +13,10 @@ namespace BLL.Contracts
         Task<PagedResult<ReportFacturaDTO>> GetFacturas(int page = 0, int pageSize = 10);
         Task<PagedResult<ReportFacturaDTO>> GetFacturasbyClient(int Idpaciente, int page = 0, int pageSize = 10);
         Task<byte[]> GenerarFacturaPdf(int IdFactura, string wwwRootPath);
+        Task<PagedResult<paymethpsychologistDTO>> PaymethPsychologist(int idPsicologo, DateTime Fechainicio,
+            DateTime Fechafin, int page = 0, int pageSize = 10);
 
+        Task<Domain.Models.Factura> GetFacturasbyId(int IdFactura);
+        Task<bool> estafacturadaLaTerapia(int idterapia);
     }
 }

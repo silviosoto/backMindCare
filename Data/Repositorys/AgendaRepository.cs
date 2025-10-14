@@ -41,16 +41,23 @@ namespace DAL.Repositorys
         public async Task<List<AgendaResponseDTO>> GetAgendaByPsicologo(int IdPsicologo, int DiaSemana, int mes, int anio)
         {
 
-           //int Idpsicologo = await  GetPsicologoByUser(IdUser);
+            //int Idpsicologo = await  GetPsicologoByUser(IdUser);
+            var Psicologo = await context.Psicologos
+                .Include(x => x.IdDatosPersonalesNavigation)
+                .ThenInclude(x => x.User)
+                .FirstOrDefaultAsync(f => f.IdDatosPersonalesNavigation.User.Id == IdPsicologo);
 
-               var list = await context.Agenda.Where(
-                   x=> x.Idpsicologo == IdPsicologo
-                && x.anio == anio
-                && x.mes == mes
-                && x.DiaSemana == DiaSemana
-                && x.Estado == true 
-                )
-              .Select(ag => new AgendaResponseDTO
+            var aegenda =  context.Agenda
+             .Include(u => u.IdPsicologoNavigation)
+             .Where(
+                 x => x.Idpsicologo == Psicologo.Id
+                 && (x.anio == anio || anio == 0)
+                 && (x.mes == mes || mes == 0)
+                 && (x.DiaSemana == DiaSemana || DiaSemana == 0)
+                 && (x.Estado == true )
+             );
+
+           var list = await aegenda.Select(ag => new AgendaResponseDTO
               {
                   Id = ag.Id,
                   idPsicologo = ag.Idpsicologo,
