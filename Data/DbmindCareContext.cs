@@ -519,17 +519,22 @@ public partial class DbmindCareContext : DbContext
             entity.Property(d => d.Total)
                   .HasColumnType("decimal(18,2)");
 
-            // Relación con Servicio
+            entity.Property(e => e.ispackage)
+                  .HasColumnName("ispackage");
+
+            // Relación con Servicio (NO cascade)
             entity.HasOne(d => d.Servicio)
                   .WithMany(s => s.FacturaDetalles)
-                  .HasForeignKey(d => d.IdServicio);  // No eliminar servicios usados en facturas
-           
+                  .HasForeignKey(d => d.IdServicio)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            // Relación con Terapia (NO cascade)
             entity.HasOne(d => d.Terapia)
                   .WithMany()
-                  .HasForeignKey(d => d.IdTerapia);
-
-            entity.Property(e => e.ispackage).HasColumnName("ispackage");
+                  .HasForeignKey(d => d.IdTerapia)
+                  .OnDelete(DeleteBehavior.Restrict);
         });
+
 
         modelBuilder.Entity<Pagos>(entity =>
         {

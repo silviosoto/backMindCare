@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Repositorys;
 using Microsoft.Extensions.Logging;
-using AutoMapper; 
+using AutoMapper;
 using Domain.Models;
 using Domain.DTO;
 using API.Models;
 using Data.Models;
 using Data.Contracts;
 
-namespace BLL.HobbiesBLL
+namespace BLL.Servicio
 {
     public class HobbiesSevices
     {

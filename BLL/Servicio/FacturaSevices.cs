@@ -1,8 +1,7 @@
 ﻿using API.Models;
-using AutoMapper; 
+using AutoMapper;
 using BLL.Contracts;
 using BLL.Documents;
-using BLL.Servicio;
 using DAL.Contracts;
 using DAL.Tools;
 using Domain.DTO;
@@ -11,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using QuestPDF.Fluent;
 
 
-namespace BLL.Factura
+namespace BLL.Servicio
 {
     public class FacturaSevices : IFacturaService
     {
@@ -30,7 +29,7 @@ namespace BLL.Factura
             _servicioService = servicioService;
         }
 
-        public async Task<Domain.Models.Factura> CrearFactura(FacturaDto facturaDto)
+        public async Task<Factura> CrearFactura(FacturaDto facturaDto)
         {
             try
             {
@@ -60,7 +59,7 @@ namespace BLL.Factura
                     Total = (dto.ValorUnitario * dto.Cantidad) + ((dto.ValorUnitario * dto.Cantidad) * 0.19m)
                 }).ToList();
                 
-                var factura = new Domain.Models.Factura
+                var factura = new Factura
                 {
                     NumeroFactura = numeroFactura,
                     FechaEmision = DateTime.Now,
@@ -96,7 +95,7 @@ namespace BLL.Factura
             return await _facturaRepository.GetFacturasbyClient(Idpaciente, page, pageSize);
         }
 
-        public async Task<Domain.Models.Factura> GetFacturasbyId(int IdFactura)
+        public async Task<Factura> GetFacturasbyId(int IdFactura)
         {
             return await _facturaRepository.GetFacturasbyId(IdFactura);
         }

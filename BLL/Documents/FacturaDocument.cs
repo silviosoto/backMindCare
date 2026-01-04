@@ -1,5 +1,4 @@
-﻿using QuestPDF.Infrastructure;
-using QuestPDF.Fluent;
+﻿using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 
@@ -105,7 +104,7 @@ namespace BLL.Documents
                     col.Item().AlignRight().Column(c =>
                     {
                         c.Item().Text($"Subtotal: ${_factura.Subtotal:0,0.00}");
-                        c.Item().Text($"IVA: ${_factura.Iva:0,0.00}"); 
+                        c.Item().Text($"IVA: ${_factura.Iva:0,0.00}");
                         c.Item().Text($"TOTAL: ${_factura.Total:0,0.00}")
                             .Bold().FontSize(14).FontColor(Colors.Blue.Darken2);
                     });

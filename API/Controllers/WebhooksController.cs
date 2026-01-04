@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
 using Data.Contracts;
-using Domain.Models;
-using BLL.PsicologoBll;
+using Domain.Models; 
 using BLL.Servicio;
 using System.Text.Json.Serialization;
 

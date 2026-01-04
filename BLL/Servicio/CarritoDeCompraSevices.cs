@@ -1,13 +1,12 @@
-﻿using AutoMapper; 
+﻿using AutoMapper;
 using BLL.Contracts;
 using BLL.DTOs;
-using BLL.HobbiesBLL;
 using DAL.Contracts;
 using Domain.DTO;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 
-namespace BLL
+namespace BLL.Servicio
 {
     public class CarritoDeCompraSevices : ICarroDeCompraService
     {

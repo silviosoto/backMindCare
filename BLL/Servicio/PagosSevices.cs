@@ -1,10 +1,8 @@
 ﻿using API.Models;
-using AutoMapper; 
+using AutoMapper;
 using BLL.Contracts;
 using BLL.Documents;
 using BLL.DTOs;
-using BLL.PsicologoBll;
-using BLL.Servicio;
 using DAL.Contracts;
 using DAL.Repositorys;
 using DAL.Tools;
@@ -22,7 +20,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Factura
+namespace BLL.Servicio
 {
     public class PagosSevices : IPagoService
     {

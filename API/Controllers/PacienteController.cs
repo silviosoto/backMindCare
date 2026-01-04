@@ -7,8 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models;
 using Data.Contracts;
-using Domain.Models;
-using BLL.HobbiesBLL;
+using Domain.Models; 
 using Domain.DTO;
 using BLL.Servicio;
 using Microsoft.VisualStudio.Web.CodeGeneration;
@@ -16,8 +15,7 @@ using Azure.Core;
 using Data.Models;
 using System.Security.Claims;
 using API.Models.DTOs;
-using System.Text.Json;
-using BLL.PsicologoBll;
+using System.Text.Json; 
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers

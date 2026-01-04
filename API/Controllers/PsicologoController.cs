@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using API.Models;
 using NuGet.Protocol.Core.Types;
-using BLL.PsicologoBll;
 using API.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
 using Data.Contracts;
-using Domain.DTO; 
+using Domain.DTO;
+using BLL.Servicio;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers
 {
@@ -70,7 +71,12 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-            var filePath = Path.Combine("wwwroot/uploads", psicologo.ImagePerfil);
+
+            var filePath = string.Empty;
+            if (psicologo.ImagePerfil is not null)
+            {
+                filePath = Path.Combine("wwwroot/uploads", psicologo.ImagePerfil);
+            }            
 
             //if (!System.IO.File.Exists(filePath))
             //{
@@ -79,7 +85,7 @@ namespace API.Controllers
 
             // Leer los bytes de la imagen
             var base64Image = string.Empty;
-            if (filePath is not null ) { 
+            if (!filePath.IsNullOrEmpty()) { 
                 var imageBytes = System.IO.File.ReadAllBytes(filePath);
                 base64Image = Convert.ToBase64String(imageBytes);
             }

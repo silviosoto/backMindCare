@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Repositorys;
 using Microsoft.Extensions.Logging;
-using AutoMapper; 
+using AutoMapper;
 using Domain.Models;
 using Domain.DTO;
 using API.Models;
@@ -18,7 +18,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
-namespace BLL.HobbiesBLL
+namespace BLL.Servicio
 {
     public class SalaSevices
     {

@@ -9,19 +9,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API;
 using Microsoft.OpenApi.Models;
-using BLL.PsicologoBll;
 using DAL.Repositorys;
 using BLL.Automapper;
 using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using BLL.Servicio;
 using DAL.Contracts;
-using BLL.HobbiesBLL;
 using BLL.UserBLL;
 using BLL.Contracts;
 using QuestPDF.Infrastructure;
-using BLL;
-using BLL.Factura;
 
 
 // Configurar la licencia gratuita de QuestPDF
@@ -31,7 +27,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-var connectionString = builder.Configuration.GetConnectionString("defaultConnection");  
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");  
 //var connectionString = Environment.GetEnvironmentVariable("defaultConnection");
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
@@ -75,7 +71,7 @@ builder.Services.AddScoped<UsuarioRepository>();
 builder.Services.AddScoped<UsuarioService>();
 
 builder.Services.AddScoped<IFacturaRepository, FacturaRepository>();
-builder.Services.AddScoped<IFacturaService, BLL.Factura.FacturaSevices>();
+builder.Services.AddScoped<IFacturaService, FacturaSevices>();
 builder.Services.AddScoped<ICarritoDeCompraRepository, CarritoDeCompraRepository>();
 builder.Services.AddScoped<ICarroDeCompraService, CarritoDeCompraSevices>();
 builder.Services.AddScoped<ITerapiaRepository, TerapiaRepository>();

@@ -1,6 +1,6 @@
 ﻿using API.DTOs;
 using BLL.Contracts;
-using BLL.HobbiesBLL;
+using BLL.Servicio;
 using Domain.DTO;
 using Domain.Models;
 using Microsoft.AspNetCore.Mvc;

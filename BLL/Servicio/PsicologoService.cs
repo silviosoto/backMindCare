@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using API.Models.DTOs;
 
-namespace BLL.PsicologoBll
+namespace BLL.Servicio
 {
     public class PsicologoService
     {

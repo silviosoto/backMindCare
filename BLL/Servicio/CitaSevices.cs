@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Repositorys;
 using Microsoft.Extensions.Logging;
-using AutoMapper; 
+using AutoMapper;
 using Domain.Models;
 using Domain.DTO;
 using API.Models;
@@ -14,7 +14,7 @@ using Data.Contracts;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using DAL.Tools;
 
-namespace BLL.HobbiesBLL
+namespace BLL.Servicio
 {
     public class CitasServices
     {

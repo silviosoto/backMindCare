@@ -1,8 +1,6 @@
 ﻿using API.Models;
 using API.Tools;
 using BLL.Contracts;
-using BLL.HobbiesBLL;
-using BLL.PsicologoBll;
 using BLL.Servicio;
 using Data.Contracts;
 using Domain.DTO;

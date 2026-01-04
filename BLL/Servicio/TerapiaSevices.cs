@@ -1,11 +1,11 @@
-﻿using AutoMapper; 
+﻿using AutoMapper;
 using BLL.Contracts;
 using BLL.DTOs;
 using DAL.Contracts;
 using Domain.Models;
 using Microsoft.Extensions.Logging;
 
-namespace BLL
+namespace BLL.Servicio
 {
     public class TerapiaSevices : ITerapiaService
     {
